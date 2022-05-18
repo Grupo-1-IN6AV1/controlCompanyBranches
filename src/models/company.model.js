@@ -11,7 +11,8 @@ const companySchema = mongoose.Schema({
     typeCompany: {type: mongoose.Schema.ObjectId, ref: 'TypeCompany'},
     email: String,
     phone: String,
-    role: String, 
+    role: String,
+    products: [{ type: mongoose.Schema.ObjectId, ref: 'Product' }] 
 
 });
 
