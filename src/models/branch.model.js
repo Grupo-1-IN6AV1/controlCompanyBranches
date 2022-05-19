@@ -9,12 +9,15 @@ const branchSchema = mongoose.Schema({
     address: String,
     company: {type: mongoose.Schema.ObjectId, ref : 'Company'},
     township: {type: mongoose.Schema.ObjectId, ref : 'Township'},
-    branchProducts: [{
-        product: { type: mongoose.Schema.ObjectId, ref: 'Product' },
-        stock: Number,
-        sales: Number
-    }]
+    products : [{
+            nameProduct: String,
+            price: Number,
+            stock: Number,
+            sales: Number,
+            companyProduct: {type: mongoose.Schema.ObjectId, ref: 'CompanyProduct'}, 
+    }],
 
 });
 
 module.exports = mongoose.model('Branch', branchSchema);
+
