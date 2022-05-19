@@ -3,6 +3,8 @@
 const Township = require('../models/township.model');
 const { validateData, checkUpdated} = require('../utils/validate');
 
+
+//Función de Testeo//
 exports.testTownship = (req, res)=>{
     return res.send({message: 'Function testTownShip is running'}); 
 }

@@ -4,6 +4,7 @@ const TypeCompany = require('../models/typeCompany.model');
 const Company = require('../models/company.model');
 const { validateData, checkUpdated} = require('../utils/validate');
 
+//Función de Testeo//
 exports.testTypeCompany = (req, res)=>{
     return res.send({message: 'Function testTypeCompany is running'}); 
 }

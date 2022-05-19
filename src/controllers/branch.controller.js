@@ -9,6 +9,7 @@ const jwt = require('../services/jwt');
 
 
 //FUNCIONES PÚBLICAS
+//Función de Testeo//
 exports.branchTest = async (req, res)=>{
     await res.send({message: 'User Test is running.'})
 }
@@ -262,7 +263,7 @@ exports.deleteProductBranch = async (req, res) => {
         const branchExist= await Branch.findOne({_id: branchID })
             if(!branchExist) return res.send({message: 'Branch not found'});
     
-        //Eliminando de Journeys//
+        //Eliminando de Producto de una Brach//
         const deleteProduct = await Branch.findOneAndUpdate({_id: branchID}, {$pull: { 'products': {'_id': productID}}}, {new: true});
         return res.send({ message: 'Deleted Product Successfully ', deleteProduct });
     
