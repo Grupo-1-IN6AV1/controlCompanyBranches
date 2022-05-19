@@ -112,7 +112,6 @@ exports.deleteProduct = async(req, res)=>{
 
 
 
-
 //Buscar Productos por nombre//
 exports.searchProductName = async (req, res) =>{
     try{

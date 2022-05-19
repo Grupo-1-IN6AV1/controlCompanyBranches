@@ -180,6 +180,75 @@ exports.addProductBranch = async (req, res) => {
     }
 }
 
+//Update Product Branch
+exports.updateBranchProduct = async (req,res)=>
+{
+    const params = req.body;
+    const branchID = req.params.id;
+    const productID = params.product;
+    const quantity = params.quantity;
+
+    try
+    {
+        const branchExist = await Branch.findOne({_id:branchID});
+         
+        if(!branchExist)
+        return res.status(500).send({message: 'Branch not found.'});
+
+        const product = await CompanyProduct.findOne({_id:productID});
+
+        const checkData=
+        {
+            companyProduct: productID,
+            quantity: params.quantity
+        }
+
+        const msg = validateData(checkData);
+        if(msg)
+            return res.status(400).send(msg);
+
+        //VERIFICAMOS EL STOCK ACTUAL//
+        const productQuantity = branchExist.products.find(products => products.companyProduct==productID);
+
+        //REGRESAR al Stock//
+        if(params.quantity < productQuantity.stock)
+        {
+
+            const data = 
+            {
+                product: productID,
+                companyProduct: quantity,
+            }
+
+
+            //Actualizar la Sucursal//
+            const updateBranch = await Branch.updateOne(
+                {_id:branchID,
+                "products.companyProduct": productID,
+                products:{$elemMatch: { stock:{ $gt: quantity}}}},
+                {$set:
+                    {
+                        "products.$.stock": quantity,
+                    }});
+
+            //Actualizar el Producto//
+            //Actualizar el Stock Y Ventas//
+            const newStock =  parseFloat(product.stock) + (parseFloat(productQuantity.stock) - parseFloat(params.quantity));
+            
+            const updateProduct = await CompanyProduct.findOneAndUpdate(
+                {_id:product._id},
+                {stock: newStock},
+                {new:true}).lean();
+                    
+            return res.send({message:'Branch Updated.',updateBranch})
+        }      
+    }
+    catch(err)
+    {
+        console.log(err);
+        return err;
+    }
+}
 
 
 
@@ -202,3 +271,4 @@ exports.deleteProductBranch = async (req, res) => {
         return err; 
     }
 }
+

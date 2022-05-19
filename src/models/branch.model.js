@@ -10,7 +10,6 @@ const branchSchema = mongoose.Schema({
     company: {type: mongoose.Schema.ObjectId, ref : 'Company'},
     township: {type: mongoose.Schema.ObjectId, ref : 'Township'},
     products : [{
-            nameProduct: String,
             price: Number,
             stock: Number,
             sales: Number,

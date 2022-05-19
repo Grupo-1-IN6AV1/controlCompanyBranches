@@ -7,7 +7,7 @@ const mongoConfig = require('./configs/mongoConfig');
 const {encrypt, alreadyUser, alreadyCompany} = require('./src/utils/validate');
 
 //Importación del Modelo de Usuario//
-const User = require('./src/models/user.model');
+const Company = require('./src/models/company.model');
 
 //Importación del Servidor de Express
 const app = require('./configs/app');
@@ -35,7 +35,7 @@ app.listen(port, async ()=>
     const searchUserAdmin = await alreadyCompany(automaticUser.username);
     if(!searchUserAdmin)
     {
-        let userAdmin = new User(automaticUser);
+        let userAdmin = new Company(automaticUser);
         await userAdmin.save();
         console.log('User SuperAdmin register Successfully.')
     }
