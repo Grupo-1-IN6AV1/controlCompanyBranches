@@ -181,71 +181,70 @@ exports.addProductBranch = async (req, res) => {
 }
 
 //Update Product Branch
-exports.updateProductBranch = async (req, res) => {
-    try {
-        const params = req.body;
-        const companyID = req.user.sub;
-        const branchID = req.params.id;
-        const productID = params.product;
-        const cantidad = params.cantidad;
+exports.updateBranchProduct = async (req,res)=>
+{
+    const params = req.body;
+    const branchID = req.params.id;
+    const productID = params.product;
+    const quantity = params.quantity;
 
+    try
+    {
+        const branchExist = await Branch.findOne({_id:branchID});
+         
+        if(!branchExist)
+        return res.status(500).send({message: 'Branch not found.'});
 
-        //Verificar que Exista la sucursal//
-        const branchtExist = await Branch.findOne({ $and: [{ _id: branchID }, { company: companyID }] });
-        if (!branchtExist)
-            return res.status(401).send({ message: 'Branch not Found.' })
+        const product = await CompanyProduct.findOne({_id:productID});
 
-
-        //Busca el producto por ID y empresa//
-        const productExist = await CompanyProduct.findOne({ $and: [{ _id: productID }, { company: companyID }] });
-        if (!productExist)
-            return res.send({ message: 'Product not Found.' });
-
-        //verificar existencias//     
-        if (cantidad > productExist.stock) return res.send({ message: 'Not enough products in stock' });
-
-        //update stock de empresa//
-        const resta = (productExist.stock - cantidad);
-        const updateStock = await CompanyProduct.findOneAndUpdate({ _id: productExist }, { stock: resta }, { new: true });
-
-
-        //Seteo de data//
-        const data = {
-            nameProduct: productExist.name,
-            price: productExist.price,
-            stock: cantidad,
-            companyProduct: productExist._id
-        }
-
-        const products = await branchtExist.products
-
-        //Agregar primer Producto a la Sucursal//
-        if (products.length == 0) {
-            const newProductOne = await Branch.findOneAndUpdate({ _id: branchID }, { $push: { products: data } }, { new: true }).populate('products');
-            return res.send({ message: 'Added New product to Branch', newProductOne });
-        }
-
-        //Verificar que no se repitan los productos//
-        for (var key = 0; key < branchtExist.products.length; key++) 
+        const checkData=
         {
-            const checkProduct = branchtExist.products[key].companyProduct;
-            if (checkProduct != params.product) continue;
-            const addProduct = await Branch.findOneAndUpdate(
-                { $and: [{ _id: branchID }, { "products.companyProduct": params.product }] },
-                {
-                    $inc:
-                    {
-                        "products.$.stock": params.cantidad,
-                    }
-                },
-                { new: true }).lean();
-            return res.send({ message: 'Update Stock', addProduct });
+            companyProduct: productID,
+            quantity: params.quantity
         }
 
-        const newProduct = await Branch.findOneAndUpdate({ _id: branchID }, { $push: { products: data } }, { new: true }).populate('products');
-        return res.send({ message: 'Added New product to Branch', newProduct });
+        const msg = validateData(checkData);
+        if(msg)
+            return res.status(400).send(msg);
 
-    } catch (err) {
+        //VERIFICAMOS EL STOCK ACTUAL//
+        const productQuantity = branchExist.products.find(products => products.companyProduct==productID);
+
+        //REGRESAR al Stock//
+        if(params.quantity < productQuantity.stock)
+        {
+
+            const data = 
+            {
+                product: productID,
+                companyProduct: quantity,
+            }
+
+
+            //Actualizar la Sucursal//
+            const updateBranch = await Branch.updateOne(
+                {_id:branchID,
+                "products.companyProduct": productID,
+                products:{$elemMatch: { stock:{ $gt: quantity}}}},
+                {$set:
+                    {
+                        "products.$.stock": quantity,
+                    }});
+
+            //Actualizar el Producto//
+            //Actualizar el Stock Y Ventas//
+            const newStock =  parseFloat(product.stock) + (parseFloat(productQuantity.stock) - parseFloat(params.quantity));
+            
+            const updateProduct = await CompanyProduct.findOneAndUpdate(
+                {_id:product._id},
+                {stock: newStock},
+                {new:true}).lean();
+                    
+            return res.send({message:'Branch Updated.',updateBranch})
+        }      
+    }
+    catch(err)
+    {
         console.log(err);
         return err;
     }
@@ -272,3 +271,4 @@ exports.deleteProductBranch = async (req, res) => {
         return err; 
     }
 }
+
