@@ -3,6 +3,7 @@
 const Branch = require('../models/branch.model');
 const Township = require('../models/township.model');
 const CompanyProduct = require('../models/companyProduct.model');
+const Company = require ('../models/company.model');
 
 const {validateData, alreadyCompany,checkPassword, checkUpdate, checkPermission, checkUpdateAdmin} = require('../utils/validate');
 const jwt = require('../services/jwt');
@@ -24,7 +25,7 @@ exports.saveBranch = async(req, res)=>{
             name: params.name,
             phone: params.phone,
             address: params.address,
-            company: params.company,
+            company: req.user.sub,
             township: params.township,
             
         };
@@ -69,11 +70,8 @@ exports.updateBranch = async (req, res) =>{
         const validateUpdate = await checkUpdate(params);
             if(validateUpdate === false) return res.status(400).send({message: 'Cannot update this information or invalid params'});
 
-        const nameBranch = await Branch.findOne($and [{name: data.name},{ company: data.company}]);
+        const nameBranch = await Branch.findOne({$and: [{name: data.name},{ company: data.company}]});
             if(nameBranch) return res.send({message: 'Name branch already in use'});
-
-        const companyExist = await Company.findOne({_id: data.company});
-            if(!companyExist) return res.send({message: 'Company not found'});
 
         const townshipExist = await Township.findOne({_id: data.township});
             if(!townshipExist) return res.send({message: 'Township not found'});
@@ -96,7 +94,7 @@ exports.deleteBranch = async(req, res)=>{
     try{
         const branchID = req.params.id;
 
-        const branchDeleted = await Company.findOneAndDelete({_id: branchID});
+        const branchDeleted = await Branch.findOneAndDelete({_id: branchID});
         if(!branchDeleted) return res.send({message: 'Branch not found or already deleted'});
         return res.send({message: 'Branch deleted', branchDeleted});
     }catch(err){
@@ -104,7 +102,6 @@ exports.deleteBranch = async(req, res)=>{
         return res.status(500).send({err, message: 'Error deleting branch'});
     }
 }
-
 
 
 
@@ -340,3 +337,50 @@ exports.salesProduct = async (req,res)=>
 }
 
 
+//TABLA DE EQUIPOS ORDENADA POR PUNTOS//
+
+exports.mostSalesProducts = async(req,res)=>
+
+{
+
+    try
+
+    {
+
+        const branchID = req.params.id
+
+        const branch = await Branch.findOne({_id: branchID}).populate('products.companyProduct').lean();
+
+        const productsSales = await branch.products
+
+        for(var key = 0; key < branch.products.length; key++)
+
+      {
+
+
+        delete branch.products[key].companyProduct.stock;
+        delete branch.products[key].companyProduct.sales;
+        delete branch.products[key].companyProduct.price;
+        delete branch.products[key].companyProduct.company;
+        delete branch.products[key].companyProduct._id;
+        delete branch.products[key].companyProduct.__v;
+
+       }
+
+        productsSales.sort((a,b) =>{ return b.sales-a.sales; });
+
+        return res.send({productsSales});
+
+    }
+
+    catch (err)
+
+    {
+
+        console.log(err);
+
+        return err;
+
+    }
+
+}
