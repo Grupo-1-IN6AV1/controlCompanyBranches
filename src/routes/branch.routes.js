@@ -11,6 +11,7 @@ api.post('/saveBranch', mdAuth.ensureAuth, branchController.saveBranch);
 api.post('/addProduct/:id', mdAuth.ensureAuth, branchController.addProductBranch);
 api.delete('/deleteProduct/:id', mdAuth.ensureAuth, branchController.deleteProductBranch);
 api.put('/updateProduct/:id', mdAuth.ensureAuth, branchController.updateBranchProduct);
+api.put('/salesProduct/:id', mdAuth.ensureAuth, branchController.salesProduct);
 
 
 module.exports = api; 

@@ -232,7 +232,7 @@ exports.updateBranchProduct = async (req,res)=>
                         "products.$.stock": quantity,
                     }});
 
-            //Actualizar el Producto//
+
             //Actualizar el Stock Y Ventas//
             const newStock =  parseFloat(product.stock) + (parseFloat(productQuantity.stock) - parseFloat(params.quantity));
             
@@ -241,7 +241,7 @@ exports.updateBranchProduct = async (req,res)=>
                 {stock: newStock},
                 {new:true}).lean();
 
-                const viewUpdateBranch = await Branch.findOne({_id:branchID})
+            const viewUpdateBranch = await Branch.findOne({_id:branchID})
                     
             return res.send({message:'Branch Updated.',viewUpdateBranch})
         }      
@@ -265,13 +265,79 @@ exports.deleteProductBranch = async (req, res) => {
         const branchExist= await Branch.findOne({_id: branchID })
             if(!branchExist) return res.send({message: 'Branch not found'});
     
+        const product = await CompanyProduct.findOne({_id:productID});
+
+        //Verificar Stock Actual del Producto//
+        const productQuantity = branchExist.products.find(products => products.companyProduct==productID);
+
         //Eliminando de Producto de una Brach//
-        const deleteProduct = await Branch.findOneAndUpdate({_id: branchID}, {$pull: { 'products': {'_id': productID}}}, {new: true});
+        const deleteProduct = await Branch.findOneAndUpdate({_id: branchID}, {$pull: { 'products': {'companyProduct': productID}}}, {new: true});
+                    
+        const newStock =  parseFloat(product.stock) + (parseFloat(productQuantity.stock));
+        const updateProduct = await CompanyProduct.findOneAndUpdate(
+            {_id:product._id},
+            {stock: newStock},
+            {new:true}).lean();
+
+
         return res.send({ message: 'Deleted Product Successfully ', deleteProduct });
-    
-    }catch(err){
+
+    }
+    catch(err)
+    {
         console.log(err);
         return err; 
     }
 }
+
+
+//Update Product Branch
+exports.salesProduct = async (req,res)=>
+{
+    const params = req.body;
+    const branchID = req.params.id;
+    const productID = params.product;
+    const quantity = params.quantity;
+
+    try
+    {
+        const branchExist = await Branch.findOne({_id:branchID});
+         
+        if(!branchExist)
+        return res.status(500).send({message: 'Branch not found.'});
+
+        //Verificar que no se repitan los productos//
+        for (var key = 0; key < branchExist.products.length; key++) 
+        {
+            const checkProduct = branchExist.products[key].companyProduct;
+            const checkStock = branchExist.products[key].stock;
+            if (checkProduct != params.product) continue;
+            if(checkStock < quantity)
+                return res.status(400).send({ message: 'Not enough products in stock' });
+            
+            const updateBranch = await Branch.findOneAndUpdate(
+                {
+                     _id:branchID,
+                    "products.companyProduct": productID},
+                { $inc:
+                        {
+                            "products.$.sales": quantity,
+                            "products.$.stock": -quantity,
+                        }
+                },
+                {new:true});
+                        
+            return res.send({ message: 'Sales Succesfully', updateBranch});
+                    
+        }
+
+        return res.status(400).send({ message: 'This Product not Exist in this Branch'});
+    }
+    catch(err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
 
