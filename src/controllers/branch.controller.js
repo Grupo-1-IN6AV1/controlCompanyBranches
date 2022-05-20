@@ -60,7 +60,6 @@ exports.updateBranch = async (req, res) =>{
             name: params.name,
             phone: params.phone,
             address: params.address,
-            company: params.company,
             township: params.township,
         };
 
