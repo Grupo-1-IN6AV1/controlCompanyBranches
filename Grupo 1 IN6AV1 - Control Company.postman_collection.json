@@ -1,0 +1,1270 @@
+{
+	"info": {
+		"_postman_id": "9af46490-11b2-4f2b-a592-6083c57e9b95",
+		"name": "Grupo 1 IN6AV1 - Control Company",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19701717"
+	},
+	"item": [
+		{
+			"name": "COMPANY",
+			"item": [
+				{
+					"name": "Function Test Company",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3200/company/companyTest",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"company",
+								"companyTest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Register Company",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMzMzNDM1LCJleHAiOjE2NTIzNDQyMzV9.rs1QAQhEMTvX06BsBhXb0g8OkkyVUiIfxFx7NwLRrYM\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Burger King",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "burgerking",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "bk@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "typeCompany",
+									"value": "6286b51fb4567876093423d4",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "5555-1111",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/company/register",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"company",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Update Company",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMzMzNDM1LCJleHAiOjE2NTIzNDQyMzV9.rs1QAQhEMTvX06BsBhXb0g8OkkyVUiIfxFx7NwLRrYM\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "phone",
+									"value": "4545-6666",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Mc Donald",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/company/update/627a377748a5c4f17e28111b",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"company",
+								"update",
+								"627a377748a5c4f17e28111b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Delete Company",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdjOWJhMTcxNjAyZjdhNjE2NjZjYTYiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImxwIiwicm9sZSI6IkVNUFJFU0EiLCJpYXQiOjE2NTIzMzQ4MzksImV4cCI6MTY1MjM0NTYzOX0.kB9SaoPwCYS_ETlA4u2WAoOgRhC5IrTws3TuC1G5qK0\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3200/company/delete/627c9ba171602f7a61666ca6",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"company",
+								"delete",
+								"627c9ba171602f7a61666ca6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Get Branches",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdiN2U1MjRiM2U1NTlhZWVhNTNmOGUiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6Im5wIiwicm9sZSI6IkVNUFJFU0EiLCJpYXQiOjE2NTIzMzg4MzEsImV4cCI6MTY1MjM0OTYzMX0.Yy4vzBJkBqN_Wrk7DdBft5LOT2O3_QIEa79rL947DqM\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3200/company/getBranches",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"company",
+								"getBranches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Get Branch",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": " \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdiN2U1MjRiM2U1NTlhZWVhNTNmOGUiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6Im5wIiwicm9sZSI6IkVNUFJFU0EiLCJpYXQiOjE2NTIzMzg4MzEsImV4cCI6MTY1MjM0OTYzMX0.Yy4vzBJkBqN_Wrk7DdBft5LOT2O3_QIEa79rL947DqM\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3200/company/getBranch/627cb0b82314805da47af492",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"company",
+								"getBranch",
+								"627cb0b82314805da47af492"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ADMIN",
+			"item": [
+				{
+					"name": "Function Search Company",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzIwYTBlYWZiYWVlOTdlYWU0ZTUiLCJuYW1lIjoiU3VwZXJBZG1pbiIsInN1cm5hbWUiOiJTdXBlckFkbWluIiwidXNlcm5hbWUiOiJTdXBlckFkbWluIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjUyMzM2OTI4LCJleHAiOjE2NTIzNDc3Mjh9.JIrgfbuy0QE0XMbLeCnX7jAC2oKJb2Dj-Zte_G2h0No\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3200/company/searchCompany/627b7e1a9c1f687eb154c684",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"company",
+								"searchCompany",
+								"627b7e1a9c1f687eb154c684"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TOWNSHIP",
+			"item": [
+				{
+					"name": "Function Test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3200/township/townshipTest",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"township",
+								"townshipTest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Add Township",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Mixco ",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/township/saveTownship",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"township",
+								"saveTownship"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Update Township",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Amatitlán",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/township/updateTownship/627a3c36e18e73a23e5b59ae",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"township",
+								"updateTownship",
+								"627a3c36e18e73a23e5b59ae"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Delete Township",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3200/township/deleteTownship/627a3c36e18e73a23e5b59ae",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"township",
+								"deleteTownship",
+								"627a3c36e18e73a23e5b59ae"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Get Townships",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3200/township/getTownships",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"township",
+								"getTownships"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "COMPANY PRODUCT",
+			"item": [
+				{
+					"name": "Function Test CompanyProduct",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3200/companyProduct/testProduct",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"testProduct"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Add Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjUyZmI0NTY3ODc2MDkzNDIzZDgiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImJ1cmdlcmtpbmciLCJyb2xlIjoiRU1QUkVTQSIsImlhdCI6MTY1Mjk5NTQ5OCwiZXhwIjoxNjUzMDA2Mjk4fQ.skgqAthave3kOwVYHmwLk5QaEFcYkwQn44eilw-8bo8\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Aguas Gasesosas",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Refrescos Carbonatados",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "5.00",
+									"type": "text"
+								},
+								{
+									"key": "providerName",
+									"value": "Pepsi",
+									"type": "text"
+								},
+								{
+									"key": "stock",
+									"value": "5000",
+									"type": "text"
+								},
+								{
+									"key": "sales",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/companyProduct/saveProduct",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"saveProduct"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Tomates",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "description",
+									"value": "papas frescas",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "5.00",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "providerName",
+									"value": "verdureria fast",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "stock",
+									"value": "65",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "sales",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/companyProduct/updateProduct/627a41dfec0ba2f489ca826e",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"updateProduct",
+								"627a41dfec0ba2f489ca826e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3200/companyProduct/deleteProduct/627a41dfec0ba2f489ca826e",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"deleteProduct",
+								"627a41dfec0ba2f489ca826e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function get ProductName",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "T",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/companyProduct/getProductName",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"getProductName"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function get ProductProvider",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "providerName",
+									"value": "ver",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/companyProduct/getProductProvider",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"getProductProvider"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function get Product Stock Elder",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjUyZmI0NTY3ODc2MDkzNDIzZDgiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImJ1cmdlcmtpbmciLCJyb2xlIjoiRU1QUkVTQSIsImlhdCI6MTY1Mjk5NTQ5OCwiZXhwIjoxNjUzMDA2Mjk4fQ.skgqAthave3kOwVYHmwLk5QaEFcYkwQn44eilw-8bo8\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:3200/companyProduct/getProductStockElder",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"getProductStockElder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function get Product Stock",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjUyZmI0NTY3ODc2MDkzNDIzZDgiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImJ1cmdlcmtpbmciLCJyb2xlIjoiRU1QUkVTQSIsImlhdCI6MTY1Mjk5NTQ5OCwiZXhwIjoxNjUzMDA2Mjk4fQ.skgqAthave3kOwVYHmwLk5QaEFcYkwQn44eilw-8bo8\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:3200/companyProduct/getProductStock",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"getProductStock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function get Products",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:3200/companyProduct/getProducts",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"getProducts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function get Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:3200/companyProduct/getProduct/627a45d9ba8e50b1a682d035",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"companyProduct",
+								"getProduct",
+								"627a45d9ba8e50b1a682d035"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TYPE COMPANY",
+			"item": [
+				{
+					"name": "Function test Type Company",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3200/typeCompany/typeCompanytest",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"typeCompany",
+								"typeCompanytest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Get Type Company",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3200/typeCompany/getTypeCompany",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"typeCompany",
+								"getTypeCompany"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Add Type Company",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjQ3MDRlNGZiY2IwYmI0YjhkY2UiLCJuYW1lIjoiU3VwZXJBZG1pbiIsInVzZXJuYW1lIjoiU3VwZXJBZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTY1Mjk5NTM0MSwiZXhwIjoxNjUzMDA2MTQxfQ.ECxdcl1XRlF8KFkKImjUQey3srS2rbrZFxugj1FYDZI\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Restaurante",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Venta de Comida Rápida",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/typeCompany/saveTypeCompany",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"typeCompany",
+								"saveTypeCompany"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Delete Type Company",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:3200/typeCompany/deleteTypeCompany/627a55be467a3106b9edb2d5",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"typeCompany",
+								"deleteTypeCompany",
+								"627a55be467a3106b9edb2d5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Update TypeCO",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjdhMzc3NzQ4YTVjNGYxN2UyODExMWIiLCJuYW1lIjoiTWMgRG9uYWxkIiwidXNlcm5hbWUiOiJtY0RvbmFsZCIsInJvbGUiOiJFTVBSRVNBIiwiaWF0IjoxNjUyMTc3MDU0LCJleHAiOjE2NTIxODc4NTR9.35PLQA7HyEWjXm8LWBnO5oNi_BMAGxKzgngHZ5BniHk\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Supermercado ",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/typeCompany/updateTypeCompany/627a55be467a3106b9edb2d5",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"typeCompany",
+								"updateTypeCompany",
+								"627a55be467a3106b9edb2d5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "BRANCH",
+			"item": [
+				{
+					"name": "Function Add Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjUyZmI0NTY3ODc2MDkzNDIzZDgiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImJ1cmdlcmtpbmciLCJyb2xlIjoiRU1QUkVTQSIsImlhdCI6MTY1MzAxMDk5NiwiZXhwIjoxNjUzMDIxNzk2fQ.WKZOtINMSWbvGNVNMnvDQvvn9CpTab_3V_SY9r3M2Mo\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "product",
+									"value": "6286b711774ad2ed94ef249d",
+									"type": "text"
+								},
+								{
+									"key": "cantidad",
+									"value": "1250",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/branch/addProduct/6286b5b5b4567876093423e2",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"branch",
+								"addProduct",
+								"6286b5b5b4567876093423e2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Save Branch",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjUyZmI0NTY3ODc2MDkzNDIzZDgiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImJ1cmdlcmtpbmciLCJyb2xlIjoiRU1QUkVTQSIsImlhdCI6MTY1Mjk5NTQ5OCwiZXhwIjoxNjUzMDA2Mjk4fQ.skgqAthave3kOwVYHmwLk5QaEFcYkwQn44eilw-8bo8\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "King 1",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "5566-9988",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "14 avenida 5-14 zona 5 de Mixco",
+									"type": "text"
+								},
+								{
+									"key": "company",
+									"value": "6286b52fb4567876093423d8",
+									"type": "text"
+								},
+								{
+									"key": "township",
+									"value": "6286b54db4567876093423dd",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/branch/saveBranch",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"branch",
+								"saveBranch"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjUyZmI0NTY3ODc2MDkzNDIzZDgiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImJ1cmdlcmtpbmciLCJyb2xlIjoiRU1QUkVTQSIsImlhdCI6MTY1Mjk5NTQ5OCwiZXhwIjoxNjUzMDA2Mjk4fQ.skgqAthave3kOwVYHmwLk5QaEFcYkwQn44eilw-8bo8\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "product",
+									"value": "6286b711774ad2ed94ef249d",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/branch/updateProduct/6286b5b5b4567876093423e2",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"branch",
+								"updateProduct",
+								"6286b5b5b4567876093423e2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjUyZmI0NTY3ODc2MDkzNDIzZDgiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImJ1cmdlcmtpbmciLCJyb2xlIjoiRU1QUkVTQSIsImlhdCI6MTY1MzAxMDk5NiwiZXhwIjoxNjUzMDIxNzk2fQ.WKZOtINMSWbvGNVNMnvDQvvn9CpTab_3V_SY9r3M2Mo\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "product",
+									"value": "6286b711774ad2ed94ef249d",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/branch/deleteProduct/6286b5b5b4567876093423e2",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"branch",
+								"deleteProduct",
+								"6286b5b5b4567876093423e2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Sales Branch",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjUyZmI0NTY3ODc2MDkzNDIzZDgiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImJ1cmdlcmtpbmciLCJyb2xlIjoiRU1QUkVTQSIsImlhdCI6MTY1MzAxMDk5NiwiZXhwIjoxNjUzMDIxNzk2fQ.WKZOtINMSWbvGNVNMnvDQvvn9CpTab_3V_SY9r3M2Mo\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "product",
+									"value": "6286b5e8b4567876093423e5",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "499",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/branch/salesProduct/6286b5b5b4567876093423e2",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"branch",
+								"salesProduct",
+								"6286b5b5b4567876093423e2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Update Branch",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "company",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3200/branch/updateBranch/6286b5b5b4567876093423e2",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"branch",
+								"updateBranch",
+								"6286b5b5b4567876093423e2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Delete Branch",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:3200/branch/deleteBranch/6286b5b5b4567876093423e2",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"branch",
+								"deleteBranch",
+								"6286b5b5b4567876093423e2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Function Most Products Sales",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3200/branch/mostSalesProducts/6286b5b5b4567876093423e2",
+							"host": [
+								"localhost"
+							],
+							"port": "3200",
+							"path": [
+								"branch",
+								"mostSalesProducts",
+								"6286b5b5b4567876093423e2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Function Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Mjg2YjUyZmI0NTY3ODc2MDkzNDIzZDgiLCJuYW1lIjoiQnVyZ2VyIEtpbmciLCJ1c2VybmFtZSI6ImJ1cmdlcmtpbmciLCJyb2xlIjoiRU1QUkVTQSIsImlhdCI6MTY1Mjk5NTQ5OCwiZXhwIjoxNjUzMDA2Mjk4fQ.skgqAthave3kOwVYHmwLk5QaEFcYkwQn44eilw-8bo8\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "burgerking",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3200/company/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3200",
+					"path": [
+						"company",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
