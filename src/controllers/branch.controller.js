@@ -240,8 +240,10 @@ exports.updateBranchProduct = async (req,res)=>
                 {_id:product._id},
                 {stock: newStock},
                 {new:true}).lean();
+
+                const viewUpdateBranch = await Branch.findOne({_id:branchID})
                     
-            return res.send({message:'Branch Updated.',updateBranch})
+            return res.send({message:'Branch Updated.',viewUpdateBranch})
         }      
     }
     catch(err)
