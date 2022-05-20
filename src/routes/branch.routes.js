@@ -9,6 +9,8 @@ const mdAuth = require('../services/authenticated');
 api.get('/testBranch', branchController.branchTest);
 api.post('/saveBranch', mdAuth.ensureAuth, branchController.saveBranch);
 api.post('/addProduct/:id', mdAuth.ensureAuth, branchController.addProductBranch);
+api.put('/updateBranch/:id', mdAuth.ensureAuth, branchController.updateBranch);
+api.delete('/deleteBranch/:id', mdAuth.ensureAuth, branchController.deleteBranch);
 api.delete('/deleteProduct/:id', mdAuth.ensureAuth, branchController.deleteProductBranch);
 api.put('/updateProduct/:id', mdAuth.ensureAuth, branchController.updateBranchProduct);
 api.put('/salesProduct/:id', mdAuth.ensureAuth, branchController.salesProduct);
