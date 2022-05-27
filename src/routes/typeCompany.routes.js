@@ -11,10 +11,10 @@ api.get('/typeCompanyTest',  mdAuth.ensureAuth, mdAuth.isAdmin, typeCompanyContr
 
 //FUNCIONES PRIVADAS//
 //Type Copmany//
-api.post('/saveTypeCompany', mdAuth.ensureAuth, mdAuth.isAdmin, typeCompanyController.saveTypeCompany);
-api.put('/updateTypeCompany/:id', mdAuth.ensureAuth, mdAuth.isAdmin, typeCompanyController.updateTypeCompany);
-api.get('/getTypeCompany', mdAuth.ensureAuth, mdAuth.isAdmin, typeCompanyController.getTypeCompany);
-api.delete('/deleteTypeCompany/:id', mdAuth.ensureAuth, mdAuth.isAdmin, typeCompanyController.deleteTypeCompany);
+api.post('/saveTypeCompany', [mdAuth.ensureAuth, mdAuth.isAdmin], typeCompanyController.saveTypeCompany);
+api.put('/updateTypeCompany/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], typeCompanyController.updateTypeCompany);
+api.get('/getTypeCompany', [mdAuth.ensureAuth, mdAuth.isAdmin], typeCompanyController.getTypeCompany);
+api.delete('/deleteTypeCompany/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], typeCompanyController.deleteTypeCompany);
 
 
 module.exports = api;

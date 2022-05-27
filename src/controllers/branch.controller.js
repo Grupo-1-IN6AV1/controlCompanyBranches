@@ -4,6 +4,7 @@ const Branch = require('../models/branch.model');
 const Township = require('../models/township.model');
 const CompanyProduct = require('../models/companyProduct.model');
 const Company = require ('../models/company.model');
+const ShoppingCart = require('../models/shoppingCart.model')
 
 const {validateData, alreadyCompany,checkPassword, checkUpdate, checkPermission, checkUpdateAdmin} = require('../utils/validate');
 const jwt = require('../services/jwt');
@@ -34,7 +35,7 @@ exports.saveBranch = async(req, res)=>{
         if(msg) return res.status(400).send(msg);
 
 
-        const companyExist = await alreadyCompany(data.company);
+        const companyExist = await Branch.findOne({name:data.name});
         if(companyExist) return res.status(400).send({message: 'Branch already created'});
   
         const townshipExist = await Township.findOne({_id: params.township});
@@ -64,15 +65,15 @@ exports.updateBranch = async (req, res) =>{
             township: params.township,
         };
 
-        const branchExist = await Branch.findOne({_id: branchID});
+        const branchExist = await Branch.findOne({$and: [{_id: branchID},{ company: req.user.sub}]});
             if(!branchExist) return res.send({message: 'Branch not found'});
 
         const validateUpdate = await checkUpdate(params);
             if(validateUpdate === false) return res.status(400).send({message: 'Cannot update this information or invalid params'});
 
-        const nameBranch = await Branch.findOne({$and: [{name: data.name},{ company: data.company}]});
-            if(nameBranch) return res.send({message: 'Name branch already in use'});
-
+        const nameBranch = await Branch.findOne({$and: [{name: data.name},{ company: req.user.sub}]});
+            if(nameBranch && branchExist.name != data.name) return res.send({message: 'Name branch already in use'});
+    
         const townshipExist = await Township.findOne({_id: data.township});
             if(!townshipExist) return res.send({message: 'Township not found'});
 
@@ -290,14 +291,16 @@ exports.deleteProductBranch = async (req, res) => {
 //Update Product Branch
 exports.salesProduct = async (req,res)=>
 {
-    const params = req.body;
-    const branchID = req.params.id;
-    const productID = params.product;
-    const quantity = params.quantity;
-
     try
     {
+        const params = req.body;
+        const branchID = req.params.id;
+        const productID = params.product;
+        const quantity = params.quantity;
+        const dpi = params.dpi;
+
         const branchExist = await Branch.findOne({_id:branchID});
+        const productExist = await CompanyProduct.findOne({_id:productID})
          
         if(!branchExist)
         return res.status(500).send({message: 'Branch not found.'});
@@ -322,9 +325,70 @@ exports.salesProduct = async (req,res)=>
                         }
                 },
                 {new:true});
-                        
-            return res.send({ message: 'Sales Succesfully', updateBranch});
-                    
+
+            const shoppingCartExist = await ShoppingCart.findOne({dpi:dpi});
+            
+            if(shoppingCartExist)
+            {
+                
+                for(var key=0; key<shoppingCartExist.products.length; key++)
+                {
+                    const idUpdateProduct = shoppingCartExist.products[key].product;
+                    if(idUpdateProduct != productID)continue;
+                    return res.send({message:'You already have this product in the cart.'});
+                }
+                const setProduct = 
+                {
+                    product: productID,
+                    quantity: quantity,
+                    price: productExist.price,
+                    subTotalProduct: parseFloat(quantity) * parseFloat(productExist.price)
+                }
+                const subTotal = shoppingCartExist.products.map(item => 
+                    item.subTotalProduct).reduce((prev, curr) => prev + curr, 0)+setProduct.subTotalProduct;
+                const IVA = parseFloat(subTotal)*0.12;
+                const total = parseFloat(subTotal)+parseFloat(IVA);
+
+                const newShoppingCart = await ShoppingCart.findOneAndUpdate({ _id:shoppingCartExist._id}, 
+                    { $push:{ products: setProduct},
+                    subTotal: subTotal,
+                    IVA:IVA,
+                    total:total}, 
+                    { new:true});
+                
+                return res.send({ message: 'Sales Succesfully', updateBranch});
+            }
+            else if(!shoppingCartExist)
+            {
+                const setProduct = 
+                {
+                    product: productID,
+                    quantity: quantity,
+                    price: productExist.price,
+                    subTotalProduct: parseFloat(quantity) * parseFloat(productExist.price)
+                }
+
+                const data = 
+                {
+                    company: req.user.sub,
+                    client: params.client,
+                    dpi: dpi,
+                    products: setProduct,
+                }
+                data.subTotal = setProduct.subTotalProduct
+                data.IVA = parseFloat(data.subTotal)*0.12;
+                data.total = parseFloat(data.subTotal)+parseFloat(data.IVA);
+                if(params.NIT=='' || params.NIT==undefined || params.NIT==null)
+                {
+                    data.NIT = 'C/F'
+                }
+                else{data.NIT = params.NIT}
+
+                const addShoppingCart = new ShoppingCart(data);
+                await addShoppingCart.save();
+                            
+                return res.send({ message: 'Sales Succesfully', updateBranch});
+            }       
         }
 
         return res.status(400).send({ message: 'This Product not Exist in this Branch'});
@@ -337,19 +401,16 @@ exports.salesProduct = async (req,res)=>
 }
 
 
-//TABLA DE EQUIPOS ORDENADA POR PUNTOS//
-
 exports.mostSalesProducts = async(req,res)=>
 
 {
-
     try
-
     {
 
         const branchID = req.params.id
 
         const branch = await Branch.findOne({_id: branchID}).populate('products.companyProduct').lean();
+        if(!branch) return res.status(400).send({message: 'Branch Not Found'});
 
         const productsSales = await branch.products
 
