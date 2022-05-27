@@ -15,17 +15,19 @@ api.post('/register', companyController.register);
 api.post('/login', companyController.login);
 api.put('/update/:id', mdAuth.ensureAuth, companyController.update);
 api.delete('/delete/:id', mdAuth.ensureAuth, companyController.deleteCompany);
-api.post('/getBranches', mdAuth.ensureAuth, companyController.searchBranches);
-api.post('/getBranch/:id', mdAuth.ensureAuth, companyController.searchBranch);
+api.get('/getBranches', mdAuth.ensureAuth, companyController.searchBranches);
+api.get('/getBranch/:id', mdAuth.ensureAuth, companyController.searchBranch);
+api.get('/getCompany', mdAuth.ensureAuth, companyController.getCompany);
 
 
 //FUNCIONES PRIVADAS DEL ADMIN//
-api.post('/registerIsAdmin ', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.registerIsAdmin);
+api.post('/registerIsAdmin', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.registerIsAdmin);
 api.put('/updateIsAdmin/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.updateIsAdmin);
 api.delete('/deleteIsAdmin/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.deleteCompanyIsAdmin);
-api.post('/searchCompanies', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.searchCompanies);
+api.get('/getCompanies', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.searchCompanies);
 api.post('/searchCompany/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.searchCompany);
-api.post('/getBranchesIsAdmin', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.searchBranchesIsAdmin);
-api.post('/getBranchIsAdmin/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.searchBranchIsAdmin);
+api.get('/getBranchesIsAdmin/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.searchBranchesIsAdmin);
+api.get('/getBranchIsAdmin/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.searchBranchIsAdmin);
+api.get('/getCompanyAdmin/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.getCompanyAdmin);
 
 module.exports = api;

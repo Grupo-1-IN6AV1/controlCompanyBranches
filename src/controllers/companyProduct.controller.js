@@ -24,7 +24,6 @@ exports.addProduct = async (req, res)=>{
             price: params.price,
             providerName: params.providerName,
             stock: params.stock,
-            sales: 0,
             company: req.user.sub,
         };
 
@@ -63,15 +62,13 @@ exports.updateProduct = async(req, res)=> {
         if(msg) return res.status(400).send(msg);
 
          //- Verificar que Exista el Producto.//
-         const productExist = await CompanyProduct.findOne({_id:productId});
+         const productExist = await CompanyProduct.findOne({ $and: [{_id: productId}, {company: req.user.sub}]});
          if(!productExist) return res.status(400).send({message: 'Product not found.'});
 
- 
          //- Verificar que no se duplique con otro Producto.//
-         const productDuplicate = await CompanyProduct.findOne({ $and: [{name: params.name}, {providerName: params.providerName}]});
-         if(productDuplicate) return res.status(400).send({message: 'Product is already exist.'});
+         const productDuplicate = await CompanyProduct.findOne({ $and: [{name: params.name}, {company: req.user.sub}]});
+            if(productDuplicate && productExist.name != params.name) return res.send({message: 'Name already in use'});
 
-       
         //- Actualizar el Producto.//
         const data =
         {
@@ -80,7 +77,6 @@ exports.updateProduct = async(req, res)=> {
             price: params.price,
             providerName: params.providerName,
             stock: params.stock,
-            sales: params.sales
         };
 
         const productUpdated = await CompanyProduct.findOneAndUpdate({_id: productId}, data, {new: true});
@@ -120,7 +116,17 @@ exports.searchProductName = async (req, res) =>{
 
         const msg = validateData(data);
         if(!msg){
-            const product = await CompanyProduct.find({name: {$regex: params.name, $options: 'i'}});
+            const product = await CompanyProduct.find({name: {$regex: params.name, $options: 'i'}}).populate('company');
+            for(let productData of product)
+            {
+                productData.company.username = undefined;
+                productData.company.password = undefined
+                productData.company.email = undefined
+                productData.company.phone = undefined
+                productData.company.role = undefined
+                productData.company.typeCompany = undefined
+                productData.company.__v = undefined
+            }
             return res.send({product});
         }else return res.status(400).send(msg);
     }catch(err){
@@ -140,7 +146,19 @@ exports.searchProductProvider = async (req, res) =>{
 
         const msg = validateData(data);
         if(!msg){
-            const product = await CompanyProduct.find({providerName: {$regex: params.providerName, $options: 'i'}});
+            const product = await CompanyProduct.find({providerName: {$regex: params.providerName, $options: 'i'}}).populate('company');
+            
+            for(let productData of product)
+            {
+                productData.company.username = undefined;
+                productData.company.password = undefined
+                productData.company.email = undefined
+                productData.company.phone = undefined
+                productData.company.role = undefined
+                productData.company.typeCompany = undefined
+                productData.company.__v = undefined
+            }
+      
             return res.send({product});
         }else return res.status(400).send(msg);
     }catch(err){
@@ -156,8 +174,18 @@ exports.searchProductProvider = async (req, res) =>{
 //Buscar producto Stock de mayor a menor//
 exports.GetProductStockElder = async (req, res) =>{
     try{
-        const products = await CompanyProduct.find();
+        const products = await CompanyProduct.find().populate('company');
         products.sort((a,b) =>{ return b.stock-a.stock; });
+        for(let productData of products)
+            {
+                productData.company.username = undefined;
+                productData.company.password = undefined
+                productData.company.email = undefined
+                productData.company.phone = undefined
+                productData.company.role = undefined
+                productData.company.typeCompany = undefined
+                productData.company.__v = undefined
+            }
         return res.send(products);
     }catch(err){
         console.log(err);
@@ -170,8 +198,18 @@ exports.GetProductStockElder = async (req, res) =>{
 //Buscar producto Stock de menor a mayor//
 exports.GetProductStock = async (req, res) =>{
     try{
-        const products = await CompanyProduct.find();
+        const products = await CompanyProduct.find().populate('company');
         products.sort((a,b) =>{ return a.stock-b.stock; });
+        for(let productData of products)
+        {
+            productData.company.username = undefined;
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+        }
         return res.send(products);
     }catch(err){
         console.log(err);
@@ -182,10 +220,19 @@ exports.GetProductStock = async (req, res) =>{
 
 //Muestar un producto en específico//
 exports.getProduct = async(req, res)=>{
-    try{
+    try
+    {
         const productID = req.params.id;
-        const products = await CompanyProduct.findOne({_id: productID});
-        return res.send({message: 'Products:', products})
+        const products = await CompanyProduct.findOne({_id: productID}).populate('company');
+        products.company.username = undefined
+        products.company.password = undefined
+        products.company.email = undefined
+        products.company.phone = undefined
+        products.company.role = undefined
+        products.company.typeCompany = undefined
+        products.company.__v = undefined
+
+        return res.send({message: 'Product Found:', products})
     }catch(err){
         console.log(err);
         return err;
@@ -197,7 +244,17 @@ exports.getProduct = async(req, res)=>{
 //Muestra todos los productos agregados//
 exports.getProducts = async(req, res)=>{
     try{
-        const products = await CompanyProduct.find();
+        const products = await CompanyProduct.find().populate('company');
+        for(let productData of products)
+        {
+            productData.company.username = undefined
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+        }
         return res.send({message: 'Products:', products})
     }catch(err){
         console.log(err);

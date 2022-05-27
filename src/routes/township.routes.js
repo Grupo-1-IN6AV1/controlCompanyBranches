@@ -11,10 +11,10 @@ api.get('/townshipTest', mdAuth.ensureAuth, mdAuth.isAdmin, townshipController.t
 
 //FUNCIONES PRIVADAS//
 //TOWNSHIP//
-api.post('/saveTownship', mdAuth.ensureAuth, mdAuth.isAdmin, townshipController.saveTownship);
-api.put('/updateTownship/:id',mdAuth.ensureAuth, mdAuth.isAdmin, townshipController.updateTownship);
-api.get('/getTownships', mdAuth.ensureAuth, mdAuth.isAdmin, townshipController.getTownships);
-api.delete('/deleteTownship/:id', mdAuth.ensureAuth, mdAuth.isAdmin, townshipController.deleteTownship);
+api.post('/saveTownship', [mdAuth.ensureAuth, mdAuth.isAdmin], townshipController.saveTownship);
+api.put('/updateTownship/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], townshipController.updateTownship);
+api.get('/getTownships', [mdAuth.ensureAuth, mdAuth.isAdmin], townshipController.getTownships);
+api.delete('/deleteTownship/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], townshipController.deleteTownship);
 
 
 module.exports = api;

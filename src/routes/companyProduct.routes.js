@@ -10,7 +10,7 @@ api.get('/testProduct', companyProductController.testProduct);
 
 api.post('/saveProduct', mdAuth.ensureAuth, companyProductController.addProduct);
 api.get('/getProducts', mdAuth.ensureAuth, companyProductController.getProducts);
-api.post('/getProduct/:id', mdAuth.ensureAuth, companyProductController.getProduct);
+api.get('/getProduct/:id', mdAuth.ensureAuth, companyProductController.getProduct);
 api.put('/updateProduct/:id', mdAuth.ensureAuth, companyProductController.updateProduct);
 api.delete('/deleteProduct/:id', mdAuth.ensureAuth, companyProductController.deleteProduct);
 

@@ -77,3 +77,23 @@ exports.checkUpdated = async (user)=>{
     }
 }
 
+//Eliminación de Datos Innecesarios Carrito de Compras//
+exports.detailsShoppingCart = async(shoppingCartId)=>
+{   
+    const searchShoppingCart = await ShoppingCart.findOne({_id:shoppingCartId})
+    .populate('user')
+    .populate('products.product')
+    .lean();
+
+    for(var key = 0; key < searchShoppingCart.products.length; key++)
+    {
+        delete searchShoppingCart.user.password;
+        delete searchShoppingCart.user.role;
+        delete searchShoppingCart.products[key].product.stock;
+        delete searchShoppingCart.products[key].product.price;
+        delete searchShoppingCart.products[key].product.sales;
+        delete searchShoppingCart.products[key].product.category;
+    }
+    return searchShoppingCart;
+}
+
