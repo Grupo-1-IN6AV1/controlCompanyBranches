@@ -63,6 +63,14 @@ exports.checkUpdate = async (user)=>{
     }
 }
 
+exports.checkUpdateAdmin = async (user)=>{
+    if(user.password || Object.entries(user).length === 0){
+        return false;
+    }else{
+        return true;
+    }
+}
+
 
 exports.checkUpdated = async (user)=>{
     try{

@@ -17,7 +17,7 @@ api.put('/update/:id', mdAuth.ensureAuth, companyController.update);
 api.delete('/delete/:id', mdAuth.ensureAuth, companyController.deleteCompany);
 api.get('/getBranches', mdAuth.ensureAuth, companyController.searchBranches);
 api.get('/getBranch/:id', mdAuth.ensureAuth, companyController.searchBranch);
-api.get('/getCompany', mdAuth.ensureAuth, companyController.getCompany);
+api.get('/getCompany/:id', mdAuth.ensureAuth, companyController.getCompany);
 
 
 //FUNCIONES PRIVADAS DEL ADMIN//
