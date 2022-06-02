@@ -54,11 +54,12 @@ exports.updateTypeCompany = async (req, res)=>{
 
         const msg = validateData(params);
         if(!msg){
-            const alreadyTypeCompany = await TypeCompany.findOne({name: params.name});
-            if(!alreadyTypeCompany){
-                const updateTypeCompany = await TypeCompany.findOneAndUpdate({_id: typeCompanyID}, params, {new: true});
-                return res.send({message: 'Update Type Company', updateTypeCompany});
-            }else return res.status(400).send({message: 'TypeCompany name already exists'});
+            const typeCompanyExist =  await TypeCompany.findOne({_id: typeCompanyID}); 
+            const nameTypeCompany = await TypeCompany.findOne({name: params.name});
+            if(nameTypeCompany && typeCompanyExist.name != params.name) return res.status(400).send({message: 'Type Company Already Exist'});
+            const updateTypeCompany = await TypeCompany.findOneAndUpdate({_id: typeCompanyID}, params, {new: true});
+
+            return res.send({message: 'Update Type Company', updateTypeCompany});
         }else return res.status(400).send({message: 'Some parameter is empty'})
 
 
@@ -114,5 +115,16 @@ exports.getTypeCompany = async (req, res)=>{
     }
 }
 
-
+//Mostrar un tipo de empresa//
+exports.getTypeCompanies = async (req, res)=>{
+    try{
+        const typeCompanyID = req.params.id;
+        const typeCompanyExist = await TypeCompany.findOne({_id: typeCompanyID});
+        if (!typeCompanyExist) return res.status(400).send({err, message: 'Type company not found'})
+        return res.send({message: 'Type Company:', typeCompanyExist})
+    }catch(err){
+        console.log(err); 
+        return err; 
+    }
+}
 

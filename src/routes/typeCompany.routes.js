@@ -13,7 +13,8 @@ api.get('/typeCompanyTest',  mdAuth.ensureAuth, mdAuth.isAdmin, typeCompanyContr
 //Type Copmany//
 api.post('/saveTypeCompany', [mdAuth.ensureAuth, mdAuth.isAdmin], typeCompanyController.saveTypeCompany);
 api.put('/updateTypeCompany/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], typeCompanyController.updateTypeCompany);
-api.get('/getTypeCompany', typeCompanyController.getTypeCompany);
+api.get('/getTypeCompany', [mdAuth.ensureAuth, mdAuth.isAdmin], typeCompanyController.getTypeCompany);
+api.get('/getTypeCompanies/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], typeCompanyController.getTypeCompanies);
 api.delete('/deleteTypeCompany/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], typeCompanyController.deleteTypeCompany);
 
 
