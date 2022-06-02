@@ -8,7 +8,6 @@ const companyProductSchema = mongoose.Schema({
     price: Number,  
     providerName: String,
     stock: Number,
-    sales: Number,
     company: { type: mongoose.Schema.ObjectId, ref: 'Company' }
 });
 

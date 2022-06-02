@@ -14,6 +14,7 @@ const townshipRoutes = require('../src/routes/township.routes');
 const companyProductRoutes = require('../src/routes/companyProduct.routes');
 const typeCompanyRoutes = require('../src/routes/typeCompany.routes');
 const branchRoutes = require('../src/routes/branch.routes');
+const billRoutes = require('../src/routes/bill.routes');
 
 //APP -> Servidor HTTP (Express)
 const app = express(); //Creación del Servidor de Express
@@ -31,6 +32,7 @@ app.use('/township', townshipRoutes);
 app.use('/companyProduct', companyProductRoutes);
 app.use('/typeCompany', typeCompanyRoutes);
 app.use('/branch', branchRoutes);
+app.use('/bill', billRoutes);
 
 //Exportación//
 module.exports = app;

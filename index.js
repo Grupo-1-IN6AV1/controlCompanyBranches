@@ -4,7 +4,7 @@
 const mongoConfig = require('./configs/mongoConfig');
 
 //Importación de Encriptado//
-const {encrypt, alreadyUser, alreadyCompany} = require('./src/utils/validate');
+const {encrypt, alreadyCompany} = require('./src/utils/validate');
 
 //Importación del Modelo de Usuario//
 const Company = require('./src/models/company.model');
