@@ -353,3 +353,23 @@ exports.deleteProductIsAdmin = async(req, res)=>{
         return err;
     }
 }
+
+exports.getProductsIsAdmin = async(req, res)=>{
+    try{
+        const products = await CompanyProduct.find().populate('company');
+        for(let productData of products)
+        {
+            productData.company.username = undefined
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+        }
+        return res.send({message: 'Products:', products})
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
