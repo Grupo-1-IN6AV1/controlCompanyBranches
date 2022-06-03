@@ -9,7 +9,7 @@ const mdAuth = require('../services/authenticated');
 api.get('/testProduct', companyProductController.testProduct);
 
 api.post('/saveProduct', mdAuth.ensureAuth, companyProductController.addProduct);
-api.get('/getProducts', mdAuth.ensureAuth, companyProductController.getProducts);
+api.get('/getProductsCompany', mdAuth.ensureAuth, companyProductController.getProducts);
 api.get('/getProduct/:id', mdAuth.ensureAuth, companyProductController.getProduct);
 api.put('/updateProduct/:id', mdAuth.ensureAuth, companyProductController.updateProduct);
 api.delete('/deleteProduct/:id', mdAuth.ensureAuth, companyProductController.deleteProduct);
@@ -24,5 +24,6 @@ api.get('/getProductStock', mdAuth.ensureAuth, companyProductController.GetProdu
 api.post('/saveProductIsAdmin', [mdAuth.ensureAuth, mdAuth.isAdmin], companyProductController.addProductisAdmin);
 api.put('/updateProductIsAdmin/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], companyProductController.updateProductIsAdmin);
 api.delete('/deleteProductIsAdmin/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], companyProductController.deleteProductIsAdmin);
+api.get('/getProducts', mdAuth.ensureAuth, companyProductController.getProductsIsAdmin);
 
-module.exports = api; 
+module.exports = api;
