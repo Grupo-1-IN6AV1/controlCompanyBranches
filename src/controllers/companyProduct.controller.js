@@ -261,3 +261,95 @@ exports.getProducts = async(req, res)=>{
         return err;
     }
 }
+
+
+//ADMINISTRADOR//
+exports.addProductisAdmin = async (req, res)=>{
+    try{
+        const params = req.body;
+
+        const data = {
+            name: params.name,
+            description: params.description,
+            price: params.price,
+            providerName: params.providerName,
+            stock: params.stock,
+            company: params.company,
+        };
+
+        const msg = validateData(data);
+        if(!msg){
+             //- Verficar que no exista el prodcuto.//
+            let productExist = await CompanyProduct.findOne({ $and: [{name:params.name}, {company: params.company}]});
+            if(!productExist){
+                const saveProduct = new CompanyProduct(data);
+                await saveProduct.save();
+                return res.send({saveProduct, message: 'Product saved'});
+            }else return res.status(400).send({message: 'The product you entered already exists.'});
+        }else return res.status(400).send(msg);
+    }
+    catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+exports.updateProductIsAdmin = async(req, res)=> {
+    try{
+        const params = req.body;
+
+        //-Capturar el ID del Producto a Actualizar.//
+        const productId = req.params.id;
+
+        //Data Necesaria para la Actualización.//
+        const check = await checkUpdated(params);
+        if(check === false) return res.status(400).send({message: 'Data not recived'});
+
+
+        const msg = validateData(params);
+        if(msg) return res.status(400).send(msg);
+
+        //- Verificar Company.//
+        const company = await CompanyProduct.findOne({_id:productId});
+
+         //- Verificar que Exista el Producto.//
+         const productExist = await CompanyProduct.findOne({ $and: [{_id: productId}, {company: company.company}]});
+         if(!productExist) return res.status(400).send({message: 'Product not found.'});
+
+         //- Verificar que no se duplique con otro Producto.//
+         const productDuplicate = await CompanyProduct.findOne({ $and: [{name: params.name}, {company: company.company}]});
+            if(productDuplicate && productExist.name != params.name) return res.status(400).send({message: 'Name already in use'});
+
+        //- Actualizar el Producto.//
+        const data =
+        {
+            name: params.name,
+            description: params.description,
+            price: params.price,
+            providerName: params.providerName,
+            stock: params.stock,
+        };
+
+        const productUpdated = await CompanyProduct.findOneAndUpdate({_id: productId}, data, {new: true});
+        if(!productUpdated) return res.status(400).send({message: 'Product not found'});
+        return res.send ({message: 'Product update', productUpdated});
+        
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+exports.deleteProductIsAdmin = async(req, res)=>{
+    try{
+        //Capturar el ID del Producto.//
+        const productId = req.params.id;
+        const productDeleted = await CompanyProduct.findOneAndDelete({_id: productId});
+        if(!productDeleted){
+            return res.status(500).send({message: 'Product not found or already delete.'});
+        }else return res.send({ message: 'Product Deleted.', productDeleted});
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}

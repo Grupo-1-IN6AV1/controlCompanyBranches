@@ -20,4 +20,9 @@ api.post('/getProductProvider', mdAuth.ensureAuth, companyProductController.sear
 api.get('/getProductStockElder', mdAuth.ensureAuth, companyProductController.GetProductStockElder);
 api.get('/getProductStock', mdAuth.ensureAuth, companyProductController.GetProductStock);
 
+
+api.post('/saveProductIsAdmin', [mdAuth.ensureAuth, mdAuth.isAdmin], companyProductController.addProductisAdmin);
+api.put('/updateProductIsAdmin/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], companyProductController.updateProductIsAdmin);
+api.delete('/deleteProductIsAdmin/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], companyProductController.deleteProductIsAdmin);
+
 module.exports = api; 
