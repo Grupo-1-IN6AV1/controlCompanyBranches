@@ -18,7 +18,7 @@ api.delete('/deleteProduct/:id', mdAuth.ensureAuth, companyProductController.del
 api.post('/getProductName', mdAuth.ensureAuth, companyProductController.searchProductName);
 api.post('/getProductProvider', mdAuth.ensureAuth, companyProductController.searchProductProvider);
 api.get('/getProductStockElder', mdAuth.ensureAuth, companyProductController.GetProductStockElder);
-api.get('/getProductStock', mdAuth.ensureAuth, companyProductController.GetProductStock);
+api.get('/getProductStockMinor', mdAuth.ensureAuth, companyProductController.GetProductStock);
 
 
 api.post('/saveProductIsAdmin', [mdAuth.ensureAuth, mdAuth.isAdmin], companyProductController.addProductisAdmin);
