@@ -94,10 +94,10 @@ exports.update = async(req, res)=>{
         if(validateUpdate === false) return res.status(400).send({message: 'Cannot update this information or invalid params'});
 
         let alreadyUsername = await alreadyCompany(params.username);
-        if(alreadyUsername && companyExist.username != params.username) return res.send({message: 'Username already in use'});
+        if(alreadyUsername && companyExist.username != params.username) return res.status(400).send({message: 'Username already in use'});
         
         let alreadyName = await Company.findOne({name: params.name});
-            if(alreadyName && companyExist.name != params.name) return res.send({message: 'Name already in use'});
+            if(alreadyName && companyExist.name != params.name) return res.status(400).send({message: 'Name already in use'});
         
             const companyUpdate = await Company.findOneAndUpdate({_id: companyId}, params, {new: true}).populate('typeCompany').lean();
         if(companyUpdate) return res.send({message: 'Company updated', companyUpdate});
@@ -161,21 +161,6 @@ exports.searchBranches = async (req, res) =>{
                 companyData.company.__v = undefined
                 delete companyData.company._id;
             }
-            for(let productData of getBranches)
-            {
-                for(var key = 0; key < productData.products.length; key++)
-
-                    {
-
-                        delete productData.products[key].companyProduct.stock;
-                        delete productData.products[key].companyProduct.sales;
-                        delete productData.products[key].companyProduct.price;
-                        delete productData.products[key].companyProduct.company;
-                        delete productData.products[key].companyProduct._id;
-                        delete productData.products[key].companyProduct.__v;
-                    }
-            }
-        
         if(!getBranches) return res.send({message: 'Branches not found'});
         return res.send({message:'Branches Found:', getBranches});
     }catch(err){
@@ -201,17 +186,6 @@ exports.searchBranch = async (req, res) =>{
         getBranch.company.typeCompany = undefined
         getBranch.company.__v = undefined
         delete getBranch.company._id;
-            
-            for(var key = 0; key < getBranch.products.length; key++)
-            {
-
-                delete getBranch.products[key].companyProduct.stock;
-                delete getBranch.products[key].companyProduct.sales;
-                delete getBranch.products[key].companyProduct.price;
-                delete getBranch.products[key].companyProduct.company;
-                delete getBranch.products[key].companyProduct._id;
-                delete getBranch.products[key].companyProduct.__v;
-            }
         
         if(!getBranch) return res.send({message: 'Branch not found'});
         return res.send({message:'Branch Found:', getBranch});

@@ -13,7 +13,7 @@ api.get('/townshipTest', mdAuth.ensureAuth, mdAuth.isAdmin, townshipController.t
 //TOWNSHIP//
 api.post('/saveTownship', [mdAuth.ensureAuth, mdAuth.isAdmin], townshipController.saveTownship);
 api.put('/updateTownship/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], townshipController.updateTownship);
-api.get('/getTownships', [mdAuth.ensureAuth, mdAuth.isAdmin], townshipController.getTownships);
+api.get('/getTownships', mdAuth.ensureAuth, townshipController.getTownships);
 api.get('/getTownship/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], townshipController.getTownship);
 api.delete('/deleteTownship/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], townshipController.deleteTownship);
 

@@ -26,15 +26,15 @@ exports.addProduct = async (req, res)=>{
             stock: params.stock,
             company: req.user.sub,
         };
-
         const msg = validateData(data);
         if(!msg){
              //- Verficar que no exista el prodcuto.//
-            let productExist = await CompanyProduct.findOne({ $and: [{name:params.name}, {providerName: params.providerName}]});
+            let productExist = await CompanyProduct.findOne({ $and: [{name:params.name}, {company: req.user.sub}]});
             if(!productExist){
-                const saveProduct = new CompanyProduct(data);
+            
+                let saveProduct = new CompanyProduct(data);
                 await saveProduct.save();
-                return res.send({saveProduct, message: 'Product saved'});
+                return res.send({saveProduct, message: 'Product saved'});         
             }else return res.status(400).send({message: 'The product you entered already exists.'});
         }else return res.status(400).send(msg);
     }
@@ -174,8 +174,8 @@ exports.searchProductProvider = async (req, res) =>{
 //Buscar producto Stock de mayor a menor//
 exports.GetProductStockElder = async (req, res) =>{
     try{
-        const products = await CompanyProduct.find().populate('company');
-        products.sort((a,b) =>{ return b.stock-a.stock; });
+        const products = await CompanyProduct.find({company:req.user.sub}).populate('company');
+        products.sort((a,b) =>{ return b.stock-a.stock;});
         for(let productData of products)
             {
                 productData.company.username = undefined;
@@ -186,7 +186,7 @@ exports.GetProductStockElder = async (req, res) =>{
                 productData.company.typeCompany = undefined
                 productData.company.__v = undefined
             }
-        return res.send(products);
+        return res.send({products});
     }catch(err){
         console.log(err);
         return err;
@@ -198,7 +198,7 @@ exports.GetProductStockElder = async (req, res) =>{
 //Buscar producto Stock de menor a mayor//
 exports.GetProductStock = async (req, res) =>{
     try{
-        const products = await CompanyProduct.find().populate('company');
+        const products = await CompanyProduct.find({company:req.user.sub}).populate('company');
         products.sort((a,b) =>{ return a.stock-b.stock; });
         for(let productData of products)
         {
@@ -210,7 +210,7 @@ exports.GetProductStock = async (req, res) =>{
             productData.company.typeCompany = undefined
             productData.company.__v = undefined
         }
-        return res.send(products);
+        return res.send({products});
     }catch(err){
         console.log(err);
         return err;
@@ -244,7 +244,7 @@ exports.getProduct = async(req, res)=>{
 //Muestra todos los productos agregados//
 exports.getProducts = async(req, res)=>{
     try{
-        const products = await CompanyProduct.find().populate('company');
+        const products = await CompanyProduct.find({company:req.user.sub}).populate('company');
         for(let productData of products)
         {
             productData.company.username = undefined
