@@ -29,5 +29,7 @@ api.post('/searchCompany/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyControl
 api.get('/getBranchesIsAdmin/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.searchBranchesIsAdmin);
 api.get('/getBranchIsAdmin/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.searchBranchIsAdmin);
 api.get('/getCompanyAdmin/:id', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.getCompanyAdmin);
+api.get('/getBranchesIsAdmin', mdAuth.ensureAuth, mdAuth.isAdmin, companyController.getBranchesIsAdmin);
+
 
 module.exports = api;

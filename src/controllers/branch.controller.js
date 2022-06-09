@@ -445,3 +445,89 @@ exports.mostSalesProducts = async(req,res)=>
     }
 
 }
+
+
+
+//-----------------Admin-----------------//
+exports.saveBranchIsAdmin = async(req, res)=>{
+    try{
+        const params = req.body;
+        const data = {
+            name: params.name,
+            phone: params.phone,
+            address: params.address,
+            company: params.company,
+            township: params.township,
+            
+        };
+        
+        const msg = validateData(data);
+        if(msg) return res.status(400).send(msg);
+
+
+        const companyExist = await Branch.findOne({name:data.name});
+        if(companyExist) return res.status(400).send({message: 'Branch already created'});
+  
+        const townshipExist = await Township.findOne({_id: params.township});
+        if(!townshipExist) return res.status(400).send({message: 'Township not found'});
+
+        const branch = new Branch(data);
+        await branch.save();
+        return res.send({message: 'Branch created successfully', branch});
+
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+exports.updateBranchIsAdmin = async (req, res) =>{
+    try{
+        const branchID = req.params.id;
+        const params = req.body; 
+        
+        const data = {
+            name: params.name,
+            phone: params.phone,
+            address: params.address,
+            township: params.township,
+        };
+
+        const branchExist = await Branch.findOne({$and: [{_id: branchID}]});
+            if(!branchExist) return res.send({message: 'Branch not found'});
+
+        const validateUpdate = await checkUpdate(params);
+            if(validateUpdate === false) return res.status(400).send({message: 'Cannot update this information or invalid params'});
+
+        const nameBranch = await Branch.findOne({$and: [{name: data.name}]});
+            if(nameBranch && branchExist.name != data.name) return res.status(400).send({message: 'Name branch already in use'});
+    
+        const townshipExist = await Township.findOne({_id: data.township});
+            if(!townshipExist) return res.send({message: 'Township not found'});
+
+        const branchUpdate = await Branch.findOneAndUpdate({_id: branchID}, data, {new: true}).lean();
+        if(!branchUpdate) return res.send({message: 'Branch not updated'});
+        return res.send({message: 'Branch updated', branchUpdate});
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({err, message: 'Failed to update company'});
+    }
+}
+
+
+
+
+//ELIMAR UNA SUCURSAL//
+exports.deleteBranchIsAdmin = async(req, res)=>{
+    try{
+        const branchID = req.params.id;
+
+        const branchDeleted = await Branch.findOneAndDelete({_id: branchID});
+        if(!branchDeleted) return res.status(400).send({message: 'Branch not found or already deleted'});
+        return res.send({message: 'Branch deleted', branchDeleted});
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({err, message: 'Error deleting branch'});
+    }
+}

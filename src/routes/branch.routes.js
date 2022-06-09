@@ -17,4 +17,9 @@ api.put('/salesProduct/:id', mdAuth.ensureAuth, branchController.salesProduct);
 api.get('/mostSalesProducts/:id', mdAuth.ensureAuth, branchController.mostSalesProducts);
 
 
+//Funciones del Admin//
+api.post('/saveBranchIsAdmin', [mdAuth.ensureAuth, mdAuth.isAdmin], branchController.saveBranchIsAdmin);
+api.delete('/deleteBranchIsAdmin/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], branchController.deleteBranchIsAdmin);
+api.put('/updateBranchIsAdmin/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], branchController.updateBranchIsAdmin);
+
 module.exports = api; 
