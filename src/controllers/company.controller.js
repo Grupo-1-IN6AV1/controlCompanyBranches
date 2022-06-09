@@ -430,3 +430,16 @@ exports.getCompanyAdmin = async (req, res) =>
 }
 
 
+
+//Get BranchesIsAdmin//
+exports.getBranchesIsAdmin = async (req, res) =>{
+    try{
+        const getBranchesIsAdmin = await Branch.find().populate('company township');
+        if(!getBranchesIsAdmin) return res.send({message: 'Branches not found'});
+        return res.send({message:'Branches Found', getBranchesIsAdmin}); 
+    }catch(err){
+        console.log(err);
+        return err; 
+    }
+}
+
