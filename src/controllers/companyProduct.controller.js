@@ -373,3 +373,104 @@ exports.getProductsIsAdmin = async(req, res)=>{
         return err;
     }
 }
+
+// Ordenar productos de forma alfabetica de la A - Z
+
+exports.getProductsOdernByUp = async(req, res)=>{
+    try{
+        const companyId= req.user.sub;
+        const products = await CompanyProduct.find({company: companyId}).sort({name: 'asc'}).populate('company');
+        
+        
+        for(let productData of products)
+        {
+            productData.company.username = undefined
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+            
+        }
+        return res.send({products});
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+exports.getProductsOdernByDown = async(req, res)=>{
+    try{
+        const companyId= req.user.sub;
+        const products = await CompanyProduct.find({company: companyId}).sort({name: 'desc'}).populate('company');
+        
+        for(let productData of products)
+        {
+            productData.company.username = undefined
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+            
+        }
+        return res.send({products});
+        
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+
+// Odrnar  por Proveider
+
+exports.getProductsOdernByProviderUp = async(req, res)=>{
+    try{
+        const companyId= req.user.sub;
+        const products = await CompanyProduct.find({company: companyId}).sort({providerName: 'asc'}).populate('company');
+        
+        
+        for(let productData of products)
+        {
+            productData.company.username = undefined
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+            
+        }
+        return res.send({products});
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+exports.getProductsOdernByProviderDown = async(req, res)=>{
+    try{
+        const companyId= req.user.sub;
+        const products = await CompanyProduct.find({company: companyId}).sort({providerName: 'desc'}).populate('company');
+        
+        
+        for(let productData of products)
+        {
+            productData.company.username = undefined
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+            
+        }
+        return res.send({products});
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
