@@ -120,16 +120,16 @@ exports.addProductBranch = async (req, res) => {
         //Verificar que Exista la sucursal//
         const branchtExist = await Branch.findOne({ $and: [{ _id: branchID }, { company: companyID }] });
         if (!branchtExist)
-            return res.status(401).send({ message: 'Branch not Found.' })
+            return res.status(400).send({ message: 'Branch not Found.' })
 
 
         //Busca el producto por ID y empresa//
         const productExist = await CompanyProduct.findOne({ $and: [{ _id: productID }, { company: companyID }] });
         if (!productExist)
-            return res.send({ message: 'Product not Found.' });
+            return res.status(400).send({ message: 'Product not Found.' });
 
         //verificar existencias//     
-        if (cantidad > productExist.stock) return res.send({ message: 'Not enough products in stock' });
+        if (cantidad > productExist.stock) return res.status(400).send({ message: 'Not enough products in stock' });
 
         //update stock de empresa//
         const resta = (productExist.stock - cantidad);
@@ -166,7 +166,7 @@ exports.addProductBranch = async (req, res) => {
                     }
                 },
                 { new: true }).lean();
-            return res.send({ message: 'Update Stock', addProduct });
+            return res.send({ message: 'Update Branch Stock', addProduct });
         }
 
         const newProduct = await Branch.findOneAndUpdate({ _id: branchID }, { $push: { products: data } }, { new: true }).populate('products');
@@ -402,7 +402,6 @@ exports.salesProduct = async (req,res)=>
 
 
 exports.mostSalesProducts = async(req,res)=>
-
 {
     try
     {
@@ -444,6 +443,36 @@ exports.mostSalesProducts = async(req,res)=>
 
     }
 
+}
+
+
+exports.getProductsBranch = async(req,res)=>
+{
+    try
+    {
+
+        const branchID = req.params.id
+
+        const branch = await Branch.findOne({_id: branchID}).populate('products.companyProduct').lean();
+        if(!branch) return res.status(400).send({message: 'Branch Not Found'});
+
+        const productsBranch = await branch.products
+
+        for(var key = 0; key < branch.products.length; key++)
+        {
+            delete branch.products[key].companyProduct.stock;
+            delete branch.products[key].companyProduct.sales;
+            delete branch.products[key].companyProduct.company;
+            delete branch.products[key].companyProduct._id;
+            delete branch.products[key].companyProduct.__v;
+        }
+        return res.send({productsBranch});
+    }
+    catch (err)
+    {
+        console.log(err);
+        return err;
+    }
 }
 
 
