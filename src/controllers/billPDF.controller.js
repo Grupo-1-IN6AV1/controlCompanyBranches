@@ -66,11 +66,3 @@ exports.savePDF = async(bill)=>
         return err;
     }
 }
-
-
-
-
-
-
-
-

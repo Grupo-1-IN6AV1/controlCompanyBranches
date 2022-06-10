@@ -376,7 +376,7 @@ exports.getProductsIsAdmin = async(req, res)=>{
 
 // Ordenar productos de forma alfabetica de la A - Z
 
-exports.getProductsOdernByUp = async(req, res)=>{
+exports.getProductsOrderByUp = async(req, res)=>{
     try{
         const companyId= req.user.sub;
         const products = await CompanyProduct.find({company: companyId}).sort({name: 'asc'}).populate('company');
