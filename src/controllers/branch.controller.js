@@ -335,7 +335,7 @@ exports.salesProduct = async (req,res)=>
                 {
                     const idUpdateProduct = shoppingCartExist.products[key].product;
                     if(idUpdateProduct != productID)continue;
-                    return res.send({message:'You already have this product in the cart.'});
+                    return res.status(400).send({message:'You already have this product in the cart.'});
                 }
                 const setProduct = 
                 {
@@ -355,8 +355,10 @@ exports.salesProduct = async (req,res)=>
                     IVA:IVA,
                     total:total}, 
                     { new:true});
+
+                const shoppingCart = await ShoppingCart.findOne({dpi:dpi});    
                 
-                return res.send({ message: 'Sales Succesfully', updateBranch});
+                return res.send({ message: 'Sales Succesfully', updateBranch, shoppingCart});
             }
             else if(!shoppingCartExist)
             {
@@ -387,7 +389,8 @@ exports.salesProduct = async (req,res)=>
                 const addShoppingCart = new ShoppingCart(data);
                 await addShoppingCart.save();
                             
-                return res.send({ message: 'Sales Succesfully', updateBranch});
+                const shoppingCart = await ShoppingCart.findOne({dpi:dpi});
+                return res.send({ message: 'Sales Succesfully', updateBranch, shoppingCart});
             }       
         }
 
@@ -450,7 +453,6 @@ exports.getProductsBranch = async(req,res)=>
 {
     try
     {
-
         const branchID = req.params.id
 
         const branch = await Branch.findOne({_id: branchID}).populate('products.companyProduct').lean();
@@ -463,12 +465,60 @@ exports.getProductsBranch = async(req,res)=>
             delete branch.products[key].companyProduct.stock;
             delete branch.products[key].companyProduct.sales;
             delete branch.products[key].companyProduct.company;
-            delete branch.products[key].companyProduct._id;
             delete branch.products[key].companyProduct.__v;
         }
         return res.send({productsBranch});
     }
     catch (err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+
+exports.getProductBranch = async(req,res)=>
+{
+    try
+    {
+        const params = req.body;
+        const branchID = req.params.id;
+        const productID = params.product;
+
+        const branch = await Branch.findOne({_id: branchID}).populate('products.companyProduct');
+        const productBranch = await branch.products.id(productID);
+
+        if(!branch) return res.status(400).send({message: 'Branch Not Found'});
+
+        if (!productBranch) 
+                return res.send({ message: 'Product Not Found' }); 
+            
+        for(var key = 0; key < branch.products.length; key++)
+        {
+            delete branch.products[key].companyProduct.stock;
+            delete branch.products[key].companyProduct.sales;
+            delete branch.products[key].companyProduct.company;
+            delete branch.products[key].companyProduct._id;
+            delete branch.products[key].companyProduct.__v;
+        }
+        return res.send({productBranch});
+    }
+    catch (err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+
+exports.getShoppingCart = async(req,res)=>
+{
+    try
+    {
+        const shoppingCarts = await ShoppingCart.find({}).populate('products.product');
+        return res.send({shoppingCarts})
+    }
+    catch(err)
     {
         console.log(err);
         return err;
