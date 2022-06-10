@@ -2,18 +2,21 @@
 
 //Importación del Modelo -Product-
 const CompanyProduct = require('../models/companyProduct.model');
-const Company = require('../models/company.model')
+const Company = require('../models/company.model');
 
+const express = require('express'),
+app = express(),
+pdf = require('html-pdf'),
+fs = require('fs');
 
-const pdf = require("html-pdf");
-
-const fs = require("fs");
-
+// Constantes propias del programa
 const ubicacionPlantilla = require.resolve('../html/factura.html');
-let contenidoHtml = fs.readFileSync(ubicacionPlantilla, 'utf8')
+var contenidoHtml = fs.readFileSync(ubicacionPlantilla, 'utf8');
+const port = 3000;
+
 // Estos productos podrían venir de cualquier lugar
 
-exports.savePDF = async(bill)=>
+exports.savePDF = async(bill,res)=>
 {
     try
     {
@@ -51,18 +54,34 @@ exports.savePDF = async(bill)=>
         contenidoHtml = contenidoHtml.replace("{{total}}", `Q.${bill.total.toFixed(2)}`);
         contenidoHtml = contenidoHtml.replace("{{date}}",`${bill.date}`);
         contenidoHtml = contenidoHtml.replace("{{NIT}}",`${bill.NIT}`);
-        pdf.create(contenidoHtml).toFile(`./pdfs/Factura${bill.numberBill}.pdf`, (error) => {
-            if (error) {
-                console.log("Error creando PDF: " + error)
-            } else {
-                console.log("PDF creado correctamente");
-            }
-        });
-
+        
+        
     }
     catch(err)
     {
         console.log(err);
         return err;
     }
+
+    app.get('/', (req,res)=>
+{
+    pdf.create(contenidoHtml).toStream((error, stream) => {
+        if (error) {
+            res.end("Error creando PDF: " + error)
+        } else {
+            res.setHeader("Content-Type", "application/pdf");
+            console.log('PDF create Successfully.')
+            stream.pipe(res);
+        }
+    });
+})
+
+app.listen(port, err => {
+    if (err) {
+        // Aquí manejar el error
+        console.error("Error escuchando: ", err);
+        return;
+    }
+    // Si no se detuvo arriba con el return, entonces todo va bien ;)
+});
 }

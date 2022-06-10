@@ -16,6 +16,8 @@ api.put('/updateProduct/:id', mdAuth.ensureAuth, branchController.updateBranchPr
 api.put('/salesProduct/:id', mdAuth.ensureAuth, branchController.salesProduct);
 api.get('/mostSalesProducts/:id', mdAuth.ensureAuth, branchController.mostSalesProducts);
 api.get('/getProductsBranch/:id', mdAuth.ensureAuth, branchController.getProductsBranch);
+api.post('/getProductBranch/:id', mdAuth.ensureAuth, branchController.getProductBranch);
+api.get('/getShoppingCarts', mdAuth.ensureAuth, branchController.getShoppingCart);
 
 //Funciones del Admin//
 api.post('/saveBranchIsAdmin', [mdAuth.ensureAuth, mdAuth.isAdmin], branchController.saveBranchIsAdmin);
