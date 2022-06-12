@@ -15,6 +15,9 @@ const app = require('./configs/app');
 //Importación del Puerto en una Constante
 const port = 3200;
 
+const fs = require('fs')
+const path = require('path')
+
 mongoConfig.init();
 
 app.listen(port, async ()=>
@@ -39,5 +42,4 @@ app.listen(port, async ()=>
         await userAdmin.save();
         console.log('User SuperAdmin register Successfully.')
     }
-
 });

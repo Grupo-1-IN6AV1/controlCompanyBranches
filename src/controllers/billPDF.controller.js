@@ -11,15 +11,16 @@ fs = require('fs');
 
 // Constantes propias del programa
 const ubicacionPlantilla = require.resolve('../html/factura.html');
-var contenidoHtml = fs.readFileSync(ubicacionPlantilla, 'utf8');
-const port = 3000;
-
+var port = 3000;
+app.listen(port, async()=>{})
 // Estos productos podrían venir de cualquier lugar
 
 exports.savePDF = async(bill,res)=>
 {
     try
     {
+        let contenidoHtml = '';
+        contenidoHtml = fs.readFileSync(ubicacionPlantilla, 'utf8');
         var number = bill.numberBill;
         var tabla = "";
         for (var key = 0; key < bill.products.length; key++) 
@@ -54,34 +55,25 @@ exports.savePDF = async(bill,res)=>
         contenidoHtml = contenidoHtml.replace("{{total}}", `Q.${bill.total.toFixed(2)}`);
         contenidoHtml = contenidoHtml.replace("{{date}}",`${bill.date}`);
         contenidoHtml = contenidoHtml.replace("{{NIT}}",`${bill.NIT}`);
-        
-        
+
+        //localhost:3000/Factura{{numberBill}}
+    
+        let get = app.get(`/Bill${number}/`,(req,res)=>
+        {
+            pdf.create(contenidoHtml).toStream((error, stream) => {
+            if (error) {
+                res.end("Error creando PDF: " + error)
+            } else {
+                res.setHeader("Content-Type", "application/pdf");
+                console.log('PDF create Successfully.')
+                stream.pipe(res);
+            }
+        });
+        }) 
     }
     catch(err)
     {
         console.log(err);
         return err;
     }
-
-    app.get('/', (req,res)=>
-{
-    pdf.create(contenidoHtml).toStream((error, stream) => {
-        if (error) {
-            res.end("Error creando PDF: " + error)
-        } else {
-            res.setHeader("Content-Type", "application/pdf");
-            console.log('PDF create Successfully.')
-            stream.pipe(res);
-        }
-    });
-})
-
-app.listen(port, err => {
-    if (err) {
-        // Aquí manejar el error
-        console.error("Error escuchando: ", err);
-        return;
-    }
-    // Si no se detuvo arriba con el return, entonces todo va bien ;)
-});
 }

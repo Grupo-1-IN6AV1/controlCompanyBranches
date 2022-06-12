@@ -12,6 +12,9 @@ const CompanyProduct = require('../models/companyProduct.model');
 //Importación del Reporte en PDF de la Factura//
 const {savePDF} = require('./billPDF.controller');
 
+const path = require('path');
+const fs = require('fs');
+
 
 exports.testBill = (req, res)=>
 {
@@ -74,7 +77,24 @@ exports.createBill = async (req, res)=>
         const viewBill = await Bill.findOne({_id:bill._id})
         //Imprimir en PDF la Factura//
         const pdf = await savePDF(viewBill);
-        return res.send({message:'Bill Generated Succesfully.',viewBill});     
+        const updateBill = await Bill.findOne({_id:bill._id});
+        return res.send({message:'Bill Generated Succesfully.',updateBill});     
+    }
+    catch(err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+exports.getPDF = async (req,res) => 
+{
+    try
+    {
+        const fileName = req.params.fileName
+        const pathFile = './pdfs/' + fileName;
+        const PDF = fs.existsSync(pathFile);
+        return res.sendFile(path.resolve(pathFile));
     }
     catch(err)
     {

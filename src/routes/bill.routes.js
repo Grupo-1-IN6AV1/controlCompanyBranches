@@ -20,7 +20,12 @@ const mdAuth = require('../services/authenticated');
 //P Ú B L I C A S//
 api.get('/testBill', billController.testBill);
 
+//Connect Multiparty//
+const connectMultiparty = require('connect-multiparty');
+const upload = connectMultiparty({ uploadDir: './pdfs'});
+
 //Usuarios//
 api.post('/createBill', mdAuth.ensureAuth, billController.createBill);
+api.get('/getPDF/:fileName', mdAuth.ensureAuth, billController.getPDF);
 
 module.exports = api;

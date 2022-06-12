@@ -33,8 +33,12 @@ exports.register = async(req, res)=>{
         const alreadyTypeCompany = await TypeCompany.findOne({_id: data.typeCompany});
         if(!alreadyTypeCompany) return res.status(400).send({message: 'Type company not found'});
 
-        let already = await alreadyCompany(data.username);
-        if(already) return res.status(400).send({message: 'Username already in use'});
+        let alreadyUsername = await alreadyCompany(data.username);
+        if(alreadyUsername) return res.status(400).send({message: 'Username already in use'});
+
+        let alreadyName = await Company.findOne({name:data.name});
+        if(alreadyName) return res.status(400).send({message: 'Name already in use'});
+
         data.phone = params.phone;
         data.password = await encrypt(params.password);
 
@@ -223,6 +227,10 @@ exports.registerIsAdmin = async(req, res)=>{
 
         let already = await alreadyCompany(data.username);
         if(already) return res.status(400).send({message: 'Username already in use'});
+        
+        let alreadyName = await Company.findOne({name:data.name});
+        if(alreadyName) return res.status(400).send({message: 'Name already in use'});
+        
         data.phone = params.phone;
         data.password = await encrypt(params.password);
 
