@@ -19,18 +19,18 @@ exports.saveTownship = async (req, res)=>{
         const data = {
             name: params.name,
         };
-
+        console.log(data)
         const msg = validateData(data);
-        if(!msg){
-            const existTownship = await Township.findOne({name: params.name});
-            if(!existTownship){
-                const township = new Township(data);
-                await township.save();
-                return res.send({message: 'Township saved', township});
-            }else return res.status(400).send({message: 'Township already exist'});
-        }else{
+        if(msg)
             return res.status(400).send(msg);
-        }
+        
+        const existTownship = await Township.findOne({name: params.name});
+        if(!existTownship){
+            const township = new Township(data);
+            await township.save();
+            return res.send({message: 'Township saved', township});
+        }else return res.status(400).send({message: 'Township already exist'});
+    
     }catch(err){
         console.log(err); 
         return err; 
