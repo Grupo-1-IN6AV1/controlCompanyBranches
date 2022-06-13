@@ -19,6 +19,7 @@ const billSchema = mongoose.Schema(
     IVA: Number,
     subTotal: Number,
     total: Number,
+    pdf: String,
 });
 
 module.exports = mongoose.model('Bill', billSchema);

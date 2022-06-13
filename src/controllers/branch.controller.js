@@ -72,7 +72,7 @@ exports.updateBranch = async (req, res) =>{
             if(validateUpdate === false) return res.status(400).send({message: 'Cannot update this information or invalid params'});
 
         const nameBranch = await Branch.findOne({$and: [{name: data.name},{ company: req.user.sub}]});
-            if(nameBranch && branchExist.name != data.name) return res.send({message: 'Name branch already in use'});
+            if(nameBranch && branchExist.name != data.name) return res.status(400).send({message: 'Name branch already in use'});
     
         const townshipExist = await Township.findOne({_id: data.township});
             if(!townshipExist) return res.send({message: 'Township not found'});
@@ -120,16 +120,16 @@ exports.addProductBranch = async (req, res) => {
         //Verificar que Exista la sucursal//
         const branchtExist = await Branch.findOne({ $and: [{ _id: branchID }, { company: companyID }] });
         if (!branchtExist)
-            return res.status(401).send({ message: 'Branch not Found.' })
+            return res.status(400).send({ message: 'Branch not Found.' })
 
 
         //Busca el producto por ID y empresa//
         const productExist = await CompanyProduct.findOne({ $and: [{ _id: productID }, { company: companyID }] });
         if (!productExist)
-            return res.send({ message: 'Product not Found.' });
+            return res.status(400).send({ message: 'Product not Found.' });
 
         //verificar existencias//     
-        if (cantidad > productExist.stock) return res.send({ message: 'Not enough products in stock' });
+        if (cantidad > productExist.stock) return res.status(400).send({ message: 'Not enough products in stock' });
 
         //update stock de empresa//
         const resta = (productExist.stock - cantidad);
@@ -166,7 +166,7 @@ exports.addProductBranch = async (req, res) => {
                     }
                 },
                 { new: true }).lean();
-            return res.send({ message: 'Update Stock', addProduct });
+            return res.send({ message: 'Update Branch Stock', addProduct });
         }
 
         const newProduct = await Branch.findOneAndUpdate({ _id: branchID }, { $push: { products: data } }, { new: true }).populate('products');
@@ -335,7 +335,7 @@ exports.salesProduct = async (req,res)=>
                 {
                     const idUpdateProduct = shoppingCartExist.products[key].product;
                     if(idUpdateProduct != productID)continue;
-                    return res.send({message:'You already have this product in the cart.'});
+                    return res.status(400).send({message:'You already have this product in the cart.'});
                 }
                 const setProduct = 
                 {
@@ -355,8 +355,10 @@ exports.salesProduct = async (req,res)=>
                     IVA:IVA,
                     total:total}, 
                     { new:true});
+
+                const shoppingCart = await ShoppingCart.findOne({dpi:dpi});    
                 
-                return res.send({ message: 'Sales Succesfully', updateBranch});
+                return res.send({ message: 'Sales Succesfully', updateBranch, shoppingCart});
             }
             else if(!shoppingCartExist)
             {
@@ -387,7 +389,8 @@ exports.salesProduct = async (req,res)=>
                 const addShoppingCart = new ShoppingCart(data);
                 await addShoppingCart.save();
                             
-                return res.send({ message: 'Sales Succesfully', updateBranch});
+                const shoppingCart = await ShoppingCart.findOne({dpi:dpi});
+                return res.send({ message: 'Sales Succesfully', updateBranch, shoppingCart});
             }       
         }
 
@@ -402,7 +405,6 @@ exports.salesProduct = async (req,res)=>
 
 
 exports.mostSalesProducts = async(req,res)=>
-
 {
     try
     {
@@ -444,4 +446,160 @@ exports.mostSalesProducts = async(req,res)=>
 
     }
 
+}
+
+
+exports.getProductsBranch = async(req,res)=>
+{
+    try
+    {
+        const branchID = req.params.id
+        const companyID = req.user.sub
+
+        const branch = await Branch.findOne({ $and: [{ _id: branchID }, { company: companyID }]}).populate('products.companyProduct').lean();
+        if(!branch) return res.status(400).send({message: 'Branch Not Found'});
+
+        const productsBranch = await branch.products
+        return res.send({productsBranch});
+    }
+    catch (err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+
+exports.getProductBranch = async(req,res)=>
+{
+    try
+    {
+        const params = req.body;
+        const branchID = req.params.id;
+        const productID = params.product;
+
+        const branch = await Branch.findOne({_id: branchID}).populate('products.companyProduct');
+        const productBranch = await branch.products.id(productID);
+
+        if(!branch) return res.status(400).send({message: 'Branch Not Found'});
+
+        if (!productBranch) 
+                return res.send({ message: 'Product Not Found' }); 
+            
+        for(var key = 0; key < branch.products.length; key++)
+        {
+            delete branch.products[key].companyProduct.stock;
+            delete branch.products[key].companyProduct.sales;
+            delete branch.products[key].companyProduct.company;
+            delete branch.products[key].companyProduct._id;
+            delete branch.products[key].companyProduct.__v;
+        }
+        return res.send({productBranch});
+    }
+    catch (err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+
+exports.getShoppingCart = async(req,res)=>
+{
+    try
+    {
+        const shoppingCarts = await ShoppingCart.find({}).populate('products.product');
+        return res.send({shoppingCarts})
+    }
+    catch(err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+
+
+//-----------------Admin-----------------//
+exports.saveBranchIsAdmin = async(req, res)=>{
+    try{
+        const params = req.body;
+        const data = {
+            name: params.name,
+            phone: params.phone,
+            address: params.address,
+            company: params.company,
+            township: params.township,
+            
+        };
+        
+        const msg = validateData(data);
+        if(msg) return res.status(400).send(msg);
+
+
+        const companyExist = await Branch.findOne({name:data.name});
+        if(companyExist) return res.status(400).send({message: 'Branch already created'});
+  
+        const townshipExist = await Township.findOne({_id: params.township});
+        if(!townshipExist) return res.status(400).send({message: 'Township not found'});
+
+        const branch = new Branch(data);
+        await branch.save();
+        return res.send({message: 'Branch created successfully', branch});
+
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+exports.updateBranchIsAdmin = async (req, res) =>{
+    try{
+        const branchID = req.params.id;
+        const params = req.body; 
+        
+        const data = {
+            name: params.name,
+            phone: params.phone,
+            address: params.address,
+            township: params.township,
+        };
+
+        const branchExist = await Branch.findOne({$and: [{_id: branchID}]});
+            if(!branchExist) return res.send({message: 'Branch not found'});
+
+        const validateUpdate = await checkUpdate(params);
+            if(validateUpdate === false) return res.status(400).send({message: 'Cannot update this information or invalid params'});
+
+        const nameBranch = await Branch.findOne({$and: [{name: data.name}]});
+            if(nameBranch && branchExist.name != data.name) return res.status(400).send({message: 'Name branch already in use'});
+    
+        const townshipExist = await Township.findOne({_id: data.township});
+            if(!townshipExist) return res.send({message: 'Township not found'});
+
+        const branchUpdate = await Branch.findOneAndUpdate({_id: branchID}, data, {new: true}).lean();
+        if(!branchUpdate) return res.send({message: 'Branch not updated'});
+        return res.send({message: 'Branch updated', branchUpdate});
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({err, message: 'Failed to update company'});
+    }
+}
+
+
+
+
+//ELIMAR UNA SUCURSAL//
+exports.deleteBranchIsAdmin = async(req, res)=>{
+    try{
+        const branchID = req.params.id;
+
+        const branchDeleted = await Branch.findOneAndDelete({_id: branchID});
+        if(!branchDeleted) return res.status(400).send({message: 'Branch not found or already deleted'});
+        return res.send({message: 'Branch deleted', branchDeleted});
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({err, message: 'Error deleting branch'});
+    }
 }

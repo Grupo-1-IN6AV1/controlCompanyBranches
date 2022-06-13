@@ -2,21 +2,25 @@
 
 //Importación del Modelo -Product-
 const CompanyProduct = require('../models/companyProduct.model');
-const Company = require('../models/company.model')
+const Company = require('../models/company.model');
 
+const express = require('express'),
+app = express(),
+pdf = require('html-pdf'),
+fs = require('fs');
 
-const pdf = require("html-pdf");
-
-const fs = require("fs");
-
+// Constantes propias del programa
 const ubicacionPlantilla = require.resolve('../html/factura.html');
-let contenidoHtml = fs.readFileSync(ubicacionPlantilla, 'utf8')
+var port = 3000;
+app.listen(port, async()=>{})
 // Estos productos podrían venir de cualquier lugar
 
-exports.savePDF = async(bill)=>
+exports.savePDF = async(bill,res)=>
 {
     try
     {
+        let contenidoHtml = '';
+        contenidoHtml = fs.readFileSync(ubicacionPlantilla, 'utf8');
         var number = bill.numberBill;
         var tabla = "";
         for (var key = 0; key < bill.products.length; key++) 
@@ -51,14 +55,21 @@ exports.savePDF = async(bill)=>
         contenidoHtml = contenidoHtml.replace("{{total}}", `Q.${bill.total.toFixed(2)}`);
         contenidoHtml = contenidoHtml.replace("{{date}}",`${bill.date}`);
         contenidoHtml = contenidoHtml.replace("{{NIT}}",`${bill.NIT}`);
-        pdf.create(contenidoHtml).toFile(`./pdfs/Factura${bill.numberBill}.pdf`, (error) => {
+
+        //localhost:3000/Factura{{numberBill}}
+    
+        let get = app.get(`/Bill${number}/`,(req,res)=>
+        {
+            pdf.create(contenidoHtml).toStream((error, stream) => {
             if (error) {
-                console.log("Error creando PDF: " + error)
+                res.end("Error creando PDF: " + error)
             } else {
-                console.log("PDF creado correctamente");
+                res.setHeader("Content-Type", "application/pdf");
+                console.log('PDF create Successfully.')
+                stream.pipe(res);
             }
         });
-
+        }) 
     }
     catch(err)
     {
@@ -66,11 +77,3 @@ exports.savePDF = async(bill)=>
         return err;
     }
 }
-
-
-
-
-
-
-
-

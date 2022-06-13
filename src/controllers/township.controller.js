@@ -19,18 +19,18 @@ exports.saveTownship = async (req, res)=>{
         const data = {
             name: params.name,
         };
-
+        console.log(data)
         const msg = validateData(data);
-        if(!msg){
-            const existTownship = await Township.findOne({name: params.name});
-            if(!existTownship){
-                const township = new Township(data);
-                await township.save();
-                return res.send({message: 'Township saved', township});
-            }else return res.status(400).send({message: 'Township already exist'});
-        }else{
+        if(msg)
             return res.status(400).send(msg);
-        }
+        
+        const existTownship = await Township.findOne({name: params.name});
+        if(!existTownship){
+            const township = new Township(data);
+            await township.save();
+            return res.send({message: 'Township saved', township});
+        }else return res.status(400).send({message: 'Township already exist'});
+    
     }catch(err){
         console.log(err); 
         return err; 
@@ -52,6 +52,19 @@ exports.getTownships = async (req, res)=>{
 }
 
 
+//Mostrar un  Municipio//
+exports.getTownship = async (req, res)=>{
+    try
+    {
+        const townshipId = req.params.id
+        const township = await Township.findOne({_id:townshipId});
+        return res.send({message: 'Township:', township})
+    }catch(err){
+        console.log(err); 
+        return err; 
+    }
+}
+
 
 //Actualizar Municipio //
 exports.updateTownship = async (req, res)=>{
@@ -63,12 +76,17 @@ exports.updateTownship = async (req, res)=>{
         if(check === false) return res.status(400).send({message: 'Data not recived'});
 
         const msg = validateData(params);
-        if(!msg){
-            const alreadyTownship = await Township.findOne({name: params.name});
-            if(!alreadyTownship){
-                const updateTownship = await Township.findOneAndUpdate({_id: townshipID}, params, {new: true});
-                return res.send({message: 'Update Township', updateTownship});
-            }else return res.status(400).send({message: 'Township name already exists'});
+        if(!msg)
+        {
+            const townshipExist = await Township.findOne({_id: townshipID});
+            if(!townshipExist) return res.status.send({message: 'Township not found'});
+
+            let alreadyName = await Township.findOne({name: params.name});
+                if(alreadyName && townshipExist.name != params.name) return res.status(400).send({message: 'TownShip Already Exist'});
+    
+            const updateTownship = await Township.findOneAndUpdate({_id: townshipID}, params, {new: true});
+            return res.send({message: 'Update Township', updateTownship});
+
         }else return res.status(400).send({message: 'Some parameter is empty'})
 
         }catch(err){
@@ -85,7 +103,7 @@ exports.deleteTownship = async (req, res)=>{
     try{
         const townshipID = req.params.id;
         const townshipExist = await Township.findOne({_id: townshipID});
-        if(!townshipExist) return res.status(500).send({message: 'Township not found or already deleted.'});     
+        if(!townshipExist) return res.status(400).send({message: 'Township not found or already deleted.'});     
 
         const townshipDeleted = await Township.findOneAndDelete({_id: townshipID});
         return res.send({message: 'Delete Township.', townshipDeleted});
