@@ -194,7 +194,6 @@ exports.GetProductStockElder = async (req, res) =>{
 }
 
 
-
 //Buscar producto Stock de menor a mayor//
 exports.GetProductStock = async (req, res) =>{
     try{
@@ -375,7 +374,6 @@ exports.getProductsIsAdmin = async(req, res)=>{
 }
 
 // Ordenar productos de forma alfabetica de la A - Z
-
 exports.getProductsOrderByUp = async(req, res)=>{
     try{
         const companyId= req.user.sub;
@@ -469,6 +467,98 @@ exports.getProductsOdernByProviderDown = async(req, res)=>{
             
         }
         return res.send({products});
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+
+//Buscar producto Stock de mayor a menor//
+exports.GetProductStockElderIsAdmin = async (req, res) =>{
+    try{
+        const products = await CompanyProduct.find().populate('company');
+        products.sort((a,b) =>{ return b.stock-a.stock;});
+        for(let productData of products)
+            {
+                productData.company.username = undefined;
+                productData.company.password = undefined
+                productData.company.email = undefined
+                productData.company.phone = undefined
+                productData.company.role = undefined
+                productData.company.typeCompany = undefined
+                productData.company.__v = undefined
+            }
+        return res.send({products});
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+
+//Buscar producto Stock de menor a mayor//
+exports.GetProductStockIsAdmin = async (req, res) =>{
+    try{
+        const products = await CompanyProduct.find().populate('company');
+        products.sort((a,b) =>{ return a.stock-b.stock; });
+        for(let productData of products)
+        {
+            productData.company.username = undefined;
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+        }
+        return res.send({products});
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+exports.getProductsOrderByUpIsAdmin = async(req, res)=>{
+    try{
+        const products = await CompanyProduct.find().sort({name: 'asc'}).populate('company');
+        
+        
+        for(let productData of products)
+        {
+            productData.company.username = undefined
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+            
+        }
+        return res.send({products});
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+exports.getProductsOderByDownIsAdmin = async(req, res)=>{
+    try{
+        const products = await CompanyProduct.find().sort({name: 'desc'}).populate('company');
+        
+        for(let productData of products)
+        {
+            productData.company.username = undefined
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+            
+        }
+        return res.send({products});
+        
     }catch(err){
         console.log(err);
         return err;

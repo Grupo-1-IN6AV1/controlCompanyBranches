@@ -14,7 +14,7 @@ api.get('/getProduct/:id', mdAuth.ensureAuth, companyProductController.getProduc
 api.put('/updateProduct/:id', mdAuth.ensureAuth, companyProductController.updateProduct);
 api.delete('/deleteProduct/:id', mdAuth.ensureAuth, companyProductController.deleteProduct);
 
-
+//GETS DE COMPANY//
 api.post('/getProductName', mdAuth.ensureAuth, companyProductController.searchProductName);
 api.post('/getProductProvider', mdAuth.ensureAuth, companyProductController.searchProductProvider);
 api.get('/getProductStockElder', mdAuth.ensureAuth, companyProductController.GetProductStockElder);
@@ -24,6 +24,11 @@ api.get('/getProductsOrderByDown', mdAuth.ensureAuth, companyProductController.g
 api.get('/getProductsOdernByProviderUp', mdAuth.ensureAuth, companyProductController.getProductsOdernByProviderUp);
 api.get('/getProductsOdernByProviderDown', mdAuth.ensureAuth, companyProductController.getProductsOdernByProviderDown);
 
+//GETS DE ADMIN//
+api.get('/getProductStockElderAdmin', mdAuth.ensureAuth, companyProductController.GetProductStockElderIsAdmin);
+api.get('/getProductStockAdmin', mdAuth.ensureAuth, companyProductController.GetProductStockIsAdmin);
+api.get('/getProductsOrderByUpAdmin', mdAuth.ensureAuth, companyProductController.getProductsOrderByUpIsAdmin);
+api.get('/getProductsOrderByDownAdmin', mdAuth.ensureAuth, companyProductController.getProductsOderByDownIsAdmin);
 
 api.post('/saveProductIsAdmin', [mdAuth.ensureAuth, mdAuth.isAdmin], companyProductController.addProductisAdmin);
 api.put('/updateProductIsAdmin/:id', [mdAuth.ensureAuth, mdAuth.isAdmin], companyProductController.updateProductIsAdmin);
