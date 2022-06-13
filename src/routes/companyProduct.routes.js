@@ -20,6 +20,7 @@ api.post('/getProductProvider', mdAuth.ensureAuth, companyProductController.sear
 api.get('/getProductStockElder', mdAuth.ensureAuth, companyProductController.GetProductStockElder);
 api.get('/getProductStockMinor', mdAuth.ensureAuth, companyProductController.GetProductStock);
 api.get('/getProductsOrderByUp', mdAuth.ensureAuth, companyProductController.getProductsOrderByUp);
+api.get('/getProductsOrderByDown', mdAuth.ensureAuth, companyProductController.getProductsOdernByDown);
 api.get('/getProductsOdernByProviderUp', mdAuth.ensureAuth, companyProductController.getProductsOdernByProviderUp);
 api.get('/getProductsOdernByProviderDown', mdAuth.ensureAuth, companyProductController.getProductsOdernByProviderDown);
 

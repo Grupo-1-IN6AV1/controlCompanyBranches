@@ -454,19 +454,12 @@ exports.getProductsBranch = async(req,res)=>
     try
     {
         const branchID = req.params.id
+        const companyID = req.user.sub
 
-        const branch = await Branch.findOne({_id: branchID}).populate('products.companyProduct').lean();
+        const branch = await Branch.findOne({ $and: [{ _id: branchID }, { company: companyID }]}).populate('products.companyProduct').lean();
         if(!branch) return res.status(400).send({message: 'Branch Not Found'});
 
         const productsBranch = await branch.products
-
-        for(var key = 0; key < branch.products.length; key++)
-        {
-            delete branch.products[key].companyProduct.stock;
-            delete branch.products[key].companyProduct.sales;
-            delete branch.products[key].companyProduct.company;
-            delete branch.products[key].companyProduct.__v;
-        }
         return res.send({productsBranch});
     }
     catch (err)
