@@ -115,7 +115,17 @@ exports.addProductBranch = async (req, res) => {
         const branchID = req.params.id;
         const productID = params.product;
         const cantidad = params.cantidad;
+        const paramsObligatory =
+        {
+            quantity: cantidad,
+            branch: branchID
+        }
 
+        const msg = validateData(paramsObligatory);
+        if(msg) return res.status(400).send(msg);
+
+        if(paramsObligatory.quantity < 0)
+            return res.status(400).send({message:'The quantity product cannot be less than 0'})
 
         //Verificar que Exista la sucursal//
         const branchtExist = await Branch.findOne({ $and: [{ _id: branchID }, { company: companyID }] });
@@ -141,7 +151,8 @@ exports.addProductBranch = async (req, res) => {
             nameProduct: productExist.name,
             price: productExist.price,
             stock: cantidad,
-            companyProduct: productExist._id
+            companyProduct: productExist._id,
+            sales: 0
         }
 
         const products = await branchtExist.products
@@ -169,6 +180,90 @@ exports.addProductBranch = async (req, res) => {
             return res.send({ message: 'Update Branch Stock', addProduct });
         }
 
+        data.sales == undefined;
+        const newProduct = await Branch.findOneAndUpdate({ _id: branchID }, { $push: { products: data } }, { new: true }).populate('products');
+        return res.send({ message: 'Added New product to Branch', newProduct });
+
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
+}
+
+
+exports.addProductBranchAdmin = async (req, res) => {
+    try {
+        const params = req.body;
+        const branchID = req.params.id;
+        const productID = params.product;
+        const cantidad = params.cantidad;
+
+        const paramsObligatory =
+        {
+            quantity: cantidad,
+            branch: branchID,
+        }
+
+        const msg = validateData(paramsObligatory);
+        if(msg) return res.status(400).send(msg);
+
+        if(paramsObligatory.quantity < 0)
+            return res.status(400).send({message:'The quantity product cannot be less than 0'})
+
+        //Verificar que Exista la sucursal//
+        const branchtExist = await Branch.findOne({_id: branchID});
+        if (!branchtExist)
+            return res.status(400).send({ message: 'Branch not Found.' })
+
+
+        //Busca el producto por ID y empresa//
+        const productExist = await CompanyProduct.findOne({_id: productID});
+        if (!productExist)
+            return res.status(400).send({ message: 'Product not Found.' });
+
+        //verificar existencias//     
+        if (cantidad > productExist.stock) return res.status(400).send({ message: 'Not enough products in stock' });
+
+        //update stock de empresa//
+        const resta = (productExist.stock - cantidad);
+        const updateStock = await CompanyProduct.findOneAndUpdate({ _id: productExist }, { stock: resta }, { new: true });
+
+
+        //Seteo de data//
+        const data = {
+            nameProduct: productExist.name,
+            price: productExist.price,
+            stock: cantidad,
+            companyProduct: productExist._id,
+            sales: 0
+        }
+
+        const products = await branchtExist.products
+
+        //Agregar primer Producto a la Sucursal//
+        if (products.length == 0) {
+            const newProductOne = await Branch.findOneAndUpdate({ _id: branchID }, { $push: { products: data } }, { new: true }).populate('products');
+            return res.send({ message: 'Added New product to Branch', newProductOne });
+        }
+
+        //Verificar que no se repitan los productos//
+        for (var key = 0; key < branchtExist.products.length; key++) 
+        {
+            const checkProduct = branchtExist.products[key].companyProduct;
+            if (checkProduct != params.product) continue;
+            const addProduct = await Branch.findOneAndUpdate(
+                { $and: [{ _id: branchID }, { "products.companyProduct": params.product }] },
+                {
+                    $inc:
+                    {
+                        "products.$.stock": params.cantidad,
+                    }
+                },
+                { new: true }).lean();
+            return res.send({ message: 'Update Branch Stock', addProduct });
+        }
+
+        data.sales == undefined;
         const newProduct = await Branch.findOneAndUpdate({ _id: branchID }, { $push: { products: data } }, { new: true }).populate('products');
         return res.send({ message: 'Added New product to Branch', newProduct });
 
@@ -185,7 +280,6 @@ exports.updateBranchProduct = async (req,res)=>
     const branchID = req.params.id;
     const productID = params.product;
     const quantity = params.quantity;
-
     try
     {
         const branchExist = await Branch.findOne({_id:branchID});
@@ -204,6 +298,9 @@ exports.updateBranchProduct = async (req,res)=>
         const msg = validateData(checkData);
         if(msg)
             return res.status(400).send(msg);
+
+        if(checkData.quantity < 0)
+            return res.status(400).send({message:'The stock cannot be less than 0'})
 
         //VERIFICAMOS EL STOCK ACTUAL//
         const productQuantity = branchExist.products.find(products => products.companyProduct==productID);
@@ -241,6 +338,39 @@ exports.updateBranchProduct = async (req,res)=>
             const viewUpdateBranch = await Branch.findOne({_id:branchID})
                     
             return res.send({message:'Branch Updated.',viewUpdateBranch})
+        }
+        else if(params.quantity > productQuantity.stock)
+        {
+
+            const data = 
+            {
+                product: productID,
+                companyProduct: quantity,
+            }
+
+
+            //Actualizar la Sucursal//
+            const updateBranch = await Branch.updateOne(
+                {_id:branchID,
+                "products.companyProduct": productID,
+                products:{$elemMatch: { stock:{ $lt: quantity}}}},
+                {$set:
+                    {
+                        "products.$.stock": quantity,
+                    }});
+
+
+            //Actualizar el Stock Y Ventas//
+            const newStock =  parseFloat(product.stock) + (parseFloat(productQuantity.stock) - parseFloat(params.quantity));
+            
+            const updateProduct = await CompanyProduct.findOneAndUpdate(
+                {_id:product._id},
+                {stock: newStock},
+                {new:true}).lean();
+
+            const viewUpdateBranch = await Branch.findOne({_id:branchID})
+                    
+            return res.send({message:'Branch Updated.',viewUpdateBranch})
         }      
     }
     catch(err)
@@ -258,7 +388,6 @@ exports.deleteProductBranch = async (req, res) => {
         const params = req.body;
         const branchID = req.params.id;
         const productID = params.product;
-        
         const branchExist= await Branch.findOne({_id: branchID })
             if(!branchExist) return res.send({message: 'Branch not found'});
     
@@ -289,6 +418,137 @@ exports.deleteProductBranch = async (req, res) => {
 
 
 //Update Product Branch
+exports.salesProductIsAdmin = async (req,res)=>
+{
+    try
+    {
+        const params = req.body;
+        const branchID = req.params.id;
+        const productID = params.product;
+        const companyID = params.company;
+        const quantity = params.quantity;
+        const dpi = params.dpi;
+
+        const paramsObligatory = 
+        {
+            product: productID,
+            quantity: quantity,
+            dpi: dpi,
+            client: params.client,
+            company : companyID
+        }
+
+        if(paramsObligatory.quantity < 0)
+            return res.status(400).send({message:'The quantity product cannot be less than 0'})
+
+        const msg = validateData(paramsObligatory);
+        if(msg) return res.status(400).send(msg);
+
+        const branchExist = await Branch.findOne({_id:branchID});
+        const productExist = await CompanyProduct.findOne({_id:productID})
+         
+        if(!branchExist)
+        return res.status(500).send({message: 'Branch not found.'});
+
+        //Verificar que no se repitan los productos//
+        for (var key = 0; key < branchExist.products.length; key++) 
+        {
+            const checkProduct = branchExist.products[key].companyProduct;
+            const checkStock = branchExist.products[key].stock;
+            if (checkProduct != params.product) continue;
+            if(checkStock < quantity)
+                return res.status(400).send({ message: 'Not enough products in stock' });
+            
+            const updateBranch = await Branch.findOneAndUpdate(
+                {
+                     _id:branchID,
+                    "products.companyProduct": productID},
+                { $inc:
+                        {
+                            "products.$.sales": quantity,
+                            "products.$.stock": -quantity,
+                        }
+                },
+                {new:true});
+
+            const shoppingCartExist = await ShoppingCart.findOne({dpi:dpi});
+            
+            if(shoppingCartExist)
+            {
+                
+                for(var key=0; key<shoppingCartExist.products.length; key++)
+                {
+                    const idUpdateProduct = shoppingCartExist.products[key].product;
+                    if(idUpdateProduct != productID)continue;
+                    return res.status(400).send({message:'You already have this product in the cart.'});
+                }
+                const setProduct = 
+                {
+                    product: productID,
+                    quantity: quantity,
+                    price: productExist.price,
+                    subTotalProduct: parseFloat(quantity) * parseFloat(productExist.price)
+                }
+                const subTotal = shoppingCartExist.products.map(item => 
+                    item.subTotalProduct).reduce((prev, curr) => prev + curr, 0)+setProduct.subTotalProduct;
+                const IVA = parseFloat(subTotal)*0.12;
+                const total = parseFloat(subTotal)+parseFloat(IVA);
+
+                const newShoppingCart = await ShoppingCart.findOneAndUpdate({ _id:shoppingCartExist._id}, 
+                    { $push:{ products: setProduct},
+                    subTotal: subTotal,
+                    IVA:IVA,
+                    total:total}, 
+                    { new:true});
+
+                const shoppingCart = await ShoppingCart.findOne({dpi:dpi});    
+                
+                return res.send({ message: 'Sales Succesfully', updateBranch, shoppingCart});
+            }
+            else if(!shoppingCartExist)
+            {
+                const setProduct = 
+                {
+                    product: productID,
+                    quantity: quantity,
+                    price: productExist.price,
+                    subTotalProduct: parseFloat(quantity) * parseFloat(productExist.price)
+                }
+
+                const data = 
+                {
+                    company: companyID,
+                    client: params.client,
+                    dpi: dpi,
+                    products: setProduct,
+                }
+                data.subTotal = setProduct.subTotalProduct
+                data.IVA = parseFloat(data.subTotal)*0.12;
+                data.total = parseFloat(data.subTotal)+parseFloat(data.IVA);
+                if(params.NIT=='' || params.NIT==undefined || params.NIT==null)
+                {
+                    data.NIT = 'C/F'
+                }
+                else{data.NIT = params.NIT}
+
+                const addShoppingCart = new ShoppingCart(data);
+                await addShoppingCart.save();
+                            
+                const shoppingCart = await ShoppingCart.findOne({dpi:dpi});
+                return res.send({ message: 'Sales Succesfully', updateBranch, shoppingCart});
+            }       
+        }
+
+        return res.status(400).send({ message: 'This Product not Exist in this Branch'});
+    }
+    catch(err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+
 exports.salesProduct = async (req,res)=>
 {
     try
@@ -298,6 +558,20 @@ exports.salesProduct = async (req,res)=>
         const productID = params.product;
         const quantity = params.quantity;
         const dpi = params.dpi;
+
+        const paramsObligatory = 
+        {
+            product: productID,
+            quantity: quantity,
+            dpi: dpi,
+            client: params.client,
+        }
+
+        if(paramsObligatory.quantity < 0)
+            return res.status(400).send({message:'The quantity product cannot be less than 0'})
+
+        const msg = validateData(paramsObligatory);
+        if(msg) return res.status(400).send(msg);
 
         const branchExist = await Branch.findOne({_id:branchID});
         const productExist = await CompanyProduct.findOne({_id:productID})
@@ -464,6 +738,187 @@ exports.getProductsBranch = async(req,res)=>
     }
     catch (err)
     {
+        console.log(err);
+        return err;
+    }
+}
+
+exports.getProductsBranchIsAdmin = async(req,res)=>
+{
+    try
+    {
+        const branchID = req.params.id
+        const companyID = req.user.sub
+
+        const branch = await Branch.findOne({ _id: branchID }).populate('products.companyProduct').lean();
+        if(!branch) return res.status(400).send({message: 'Branch Not Found'});
+
+        const productsBranch = await branch.products
+        return res.send({productsBranch});
+    }
+    catch (err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+exports.getProductsBranchStockElder = async(req,res)=>
+{
+    try
+    {
+        const branchID = req.params.id
+
+        const branch = await Branch.findOne({ _id: branchID }).populate('products.companyProduct').lean();
+        if(!branch) return res.status(400).send({message: 'Branch Not Found'});
+        const productsBranch = await branch.products
+        productsBranch.sort((a,b) =>{ return b.stock-a.stock;});
+        return res.send({productsBranch});
+    }
+    catch (err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+
+exports.getProductsBranchStockMinor = async(req,res)=>
+{
+    try
+    {
+        const branchID = req.params.id
+
+        const branch = await Branch.findOne({ _id: branchID }).populate('products.companyProduct').lean();
+        if(!branch) return res.status(400).send({message: 'Branch Not Found'});
+        const productsBranch = await branch.products
+        productsBranch.sort((a,b) =>{ return a.stock-b.stock;});
+        return res.send({productsBranch});
+    }
+    catch (err)
+    {
+        console.log(err);
+        return err;
+    }
+}
+
+
+exports.getProductsOrderByUp = async(req, res)=>{
+    try{
+
+        const branchID = req.params.id;
+        const branch = await Branch.findOne({_id: branchID})
+        const productsBranch = await branch.products
+        const arrayProducts = []
+        for(let product of productsBranch)
+        {
+            let productID = product.companyProduct
+            let stock = product.stock
+            let sales = product.sales
+            let searchNameProduct = await CompanyProduct.findOne({_id:productID})
+            arrayProducts.push
+            (
+                {
+                    name: searchNameProduct.name,
+                    description: searchNameProduct.description,
+                    price: searchNameProduct.price,
+                    provider: searchNameProduct.providerName,
+                    stock: stock,
+                    sales: sales
+                }
+            );
+        }
+        arrayProducts.sort((a,b) =>
+        {
+            if(a.name < b.name)
+            {
+                return -1;
+            }
+            else if(b.name > a.name)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        })
+        return res.send({arrayProducts})
+    }
+    catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+
+exports.getProductsOrderByDown = async(req, res)=>{
+    try{
+
+        const branchID = req.params.id;
+        const branch = await Branch.findOne({_id: branchID})
+        const productsBranch = await branch.products
+        const arrayProducts = []
+        for(let product of productsBranch)
+        {
+            let productID = product.companyProduct
+            let stock = product.stock
+            let sales = product.sales
+            let searchNameProduct = await CompanyProduct.findOne({_id:productID})
+            arrayProducts.push
+            (
+                {
+                    name: searchNameProduct.name,
+                    description: searchNameProduct.description,
+                    price: searchNameProduct.price,
+                    provider: searchNameProduct.providerName,
+                    stock: stock,
+                    sales: sales
+                }
+            );
+        }
+        arrayProducts.sort((a,b) =>
+        {
+            if(a.name > b.name)
+            {
+                return -1;
+            }
+            else if(b.name < a.name)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        })
+        return res.send({arrayProducts})
+    }
+    catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
+
+exports.getProductsOderByDownIsAdmin = async(req, res)=>{
+    try{
+        const products = await CompanyProduct.find().sort({name: 'desc'}).populate('company');
+        
+        for(let productData of products)
+        {
+            productData.company.username = undefined
+            productData.company.password = undefined
+            productData.company.email = undefined
+            productData.company.phone = undefined
+            productData.company.role = undefined
+            productData.company.typeCompany = undefined
+            productData.company.__v = undefined
+            
+        }
+        return res.send({products});
+        
+    }catch(err){
         console.log(err);
         return err;
     }

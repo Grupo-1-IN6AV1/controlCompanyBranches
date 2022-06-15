@@ -19,7 +19,7 @@ exports.saveTownship = async (req, res)=>{
         const data = {
             name: params.name,
         };
-        console.log(data)
+
         const msg = validateData(data);
         if(msg)
             return res.status(400).send(msg);

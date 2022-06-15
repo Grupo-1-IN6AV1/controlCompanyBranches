@@ -42,4 +42,12 @@ app.listen(port, async ()=>
         await userAdmin.save();
         console.log('User SuperAdmin register Successfully.')
     }
+    //CREACION DE LA CARPETA POR ÚNICA VEZ//
+    fs.mkdir(path.join(__dirname, './uploads/companies'),
+        { recursive: true }, (err) => {
+            if (err) {
+                return console.error(err);
+            }
+            console.log('Directory created successfully!');
+        });
 });
