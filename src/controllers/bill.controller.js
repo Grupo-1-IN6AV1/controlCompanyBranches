@@ -31,7 +31,6 @@ exports.createBill = async (req, res)=>
         const dpi = params.dpi;
 
         const payShoppingCart = await ShoppingCart.findOne({dpi:dpi}).lean();
-        
         //Verificar que el Carrito tenga Productos//
         if(!payShoppingCart)
             return res.send({message:'Shopping Cart empty, add products.'})
