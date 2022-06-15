@@ -30,7 +30,13 @@ exports.addProduct = async (req, res)=>{
         if(!msg){
              //- Verficar que no exista el prodcuto.//
             let productExist = await CompanyProduct.findOne({ $and: [{name:params.name}, {company: req.user.sub}]});
-            if(!productExist){
+            if(!productExist)
+            {
+                if(data.price < 0)
+                return res.status(400).send({message:'The price cannot be less than 0'})
+
+                if(data.stock < 0)
+                return res.status(400).send({message:'The stock cannot be less than 0'})
             
                 let saveProduct = new CompanyProduct(data);
                 await saveProduct.save();
@@ -78,6 +84,12 @@ exports.updateProduct = async(req, res)=> {
             providerName: params.providerName,
             stock: params.stock,
         };
+
+        if(data.price < 0)
+            return res.status(400).send({message:'The price cannot be less than 0'})
+
+        if(data.stock < 0)
+            return res.status(400).send({message:'The stock cannot be less than 0'})
 
         const productUpdated = await CompanyProduct.findOneAndUpdate({_id: productId}, data, {new: true});
         if(!productUpdated) return res.status(400).send({message: 'Product not found'});
@@ -281,6 +293,13 @@ exports.addProductisAdmin = async (req, res)=>{
              //- Verficar que no exista el prodcuto.//
             let productExist = await CompanyProduct.findOne({ $and: [{name:params.name}, {company: params.company}]});
             if(!productExist){
+
+                if(data.price < 0)
+                return res.status(400).send({message:'The price cannot be less than 0'})
+
+                if(data.stock < 0)
+                return res.status(400).send({message:'The stock cannot be less than 0'})
+
                 const saveProduct = new CompanyProduct(data);
                 await saveProduct.save();
                 return res.send({saveProduct, message: 'Product saved'});
@@ -328,6 +347,12 @@ exports.updateProductIsAdmin = async(req, res)=> {
             providerName: params.providerName,
             stock: params.stock,
         };
+
+        if(data.price < 0)
+            return res.status(400).send({message:'The price cannot be less than 0'})
+
+        if(data.stock < 0)
+            return res.status(400).send({message:'The stock cannot be less than 0'})
 
         const productUpdated = await CompanyProduct.findOneAndUpdate({_id: productId}, data, {new: true});
         if(!productUpdated) return res.status(400).send({message: 'Product not found'});

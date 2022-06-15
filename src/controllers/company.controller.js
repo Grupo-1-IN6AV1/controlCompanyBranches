@@ -5,8 +5,11 @@ const TypeCompany = require('../models/typeCompany.model');
 const Branch = require('../models/branch.model');
 const CompanyProduct = require('../models/companyProduct.model');
 
+//Connect Multiparty Upload Image//
+const fs = require('fs');
+const path = require('path');
 
-const {validateData, encrypt, alreadyCompany, checkPassword, checkUpdate, checkPermission, checkUpdateAdmin} = require('../utils/validate');
+const {validateData, encrypt, alreadyCompany, checkPassword, checkUpdate, checkPermission, checkUpdateAdmin, validExtension} = require('../utils/validate');
 const jwt = require('../services/jwt');
 
 //FUNCIONES PÚBLICAS
@@ -122,24 +125,44 @@ exports.deleteCompany = async(req, res)=>{
         //Eliminar solo por token o se puede ingresar id de la empresa?//
         const companyId = req.params.id;
 
+        //INGRESAR CONTRASEÑA PARA ELIMINAR//
+        const params = req.body;
+
+        const password = params.password;
+        const data =
+        {
+            password: password
+        }
+
+        let msg = validateData(data);
+        if(msg) return res.status(400).send(msg);
+
         const persmission = await checkPermission(companyId, req.user.sub);
         if(persmission === false) return res.status(403).send({message: 'You dont have permission to delete this company'});
 
-        const branchExist = await Branch.find({company: companyId});
-        for(let branchDeleted of branchExist){
-            const branchDeleted = await Branch.findOneAndDelete({ company: companyId});
-            
+        const companyExist = await Company.findOne({_id:companyId});
+
+        if(companyExist && await checkPassword(password, companyExist.password))
+        {
+            const branchExist = await Branch.find({company: companyId});
+            for(let branchDeleted of branchExist)
+            {
+                const branchDeleted = await Branch.findOneAndDelete({ company: companyId});
+            }
+
+            const companyProductExist = await CompanyProduct.find({company: companyId});
+            for(let branchDeleted of companyProductExist)
+            {
+                const branchDeleted = await CompanyProduct.findOneAndDelete({ company: companyId});
+            }
+
+            const companyDeleted = await Company.findOneAndDelete({_id: companyId}).populate('typeCompany');
+            if(companyDeleted) return res.send({message: 'Account deleted', companyDeleted});
+            return res.send({message: 'Company not found or already deleted'});
         }
 
-        const companyProductExist = await CompanyProduct.find({company: companyId});
-        for(let branchDeleted of companyProductExist){
-            const branchDeleted = await CompanyProduct.findOneAndDelete({ company: companyId});
-            
-        }
+        return res.status(400).send({message:'The password is not correct'})
 
-        const companyDeleted = await Company.findOneAndDelete({_id: companyId}).populate('typeCompany');
-        if(companyDeleted) return res.send({message: 'Account deleted', companyDeleted});
-        return res.send({message: 'Company not found or already deleted'});
     }catch(err){
         console.log(err);
         return res.status(500).send({err, message: 'Error deleting company'});
@@ -342,33 +365,6 @@ exports.searchBranchesIsAdmin  = async (req, res) =>{
         const companyId = req.params.id;
         const getBranches = await Branch.find({company: companyId}).populate('company township products.companyProduct').lean();
         if(!getBranches) return res.status(400).send({message: 'Branch Not Found'});
-        
-        for(let companyData of getBranches)
-            {
-                companyData.company.username = undefined;
-                companyData.company.password = undefined
-                companyData.company.email = undefined
-                companyData.company.phone = undefined
-                companyData.company.role = undefined
-                companyData.company.typeCompany = undefined
-                companyData.company.__v = undefined
-                delete companyData.company._id;
-            }
-            for(let productData of getBranches)
-            {
-                for(var key = 0; key < productData.products.length; key++)
-
-                    {
-
-                        delete productData.products[key].companyProduct.stock;
-                        delete productData.products[key].companyProduct.sales;
-                        delete productData.products[key].companyProduct.price;
-                        delete productData.products[key].companyProduct.company;
-                        delete productData.products[key].companyProduct._id;
-                        delete productData.products[key].companyProduct.__v;
-                    }
-            }
-        if(!getBranches) return res.send({message: 'Branches not found'});
         return res.send({message:'Branches Found:', getBranches});
     }catch(err){
         console.log(err);
@@ -391,7 +387,6 @@ exports.searchBranchIsAdmin = async (req, res) =>{
         getBranch.company.role = undefined
         getBranch.company.typeCompany = undefined
         getBranch.company.__v = undefined
-        delete getBranch.company._id;
             
             for(var key = 0; key < getBranch.products.length; key++)
             {
@@ -437,8 +432,6 @@ exports.getCompanyAdmin = async (req, res) =>
     }
 }
 
-
-
 //Get BranchesIsAdmin//
 exports.getBranchesIsAdmin = async (req, res) =>{
     try{
@@ -450,4 +443,52 @@ exports.getBranchesIsAdmin = async (req, res) =>{
         return err; 
     }
 }
+
+//Función para agregar una IMG a una COMPANY
+exports.addImgCompany=async(req,res)=>
+{
+    try{
+        const companyID = req.params.id;
+
+        const permission = await checkPermission(companyID, req.user.sub);
+        if(permission === false) return res.status(401).send({message: 'You dont have permission to update this user'});
+        if(!req.files.image || !req.files.image.type) return res.status(400).send({message: 'Havent sent image'});
+        
+        const filePath = req.files.image.path; 
+       
+        const fileSplit = filePath.split('\\'); 
+        const fileName = fileSplit[2]; 
+
+        const extension = fileName.split('\.'); 
+        const fileExt = extension[1]; 
+
+        const validExt = await validExtension(fileExt, filePath);
+        if(validExt === false) return res.status(400).send('Invalid extension');
+        const updateUser = await Company.findOneAndUpdate({_id: companyID}, {image: fileName});
+        if(!updateUser) return res.status(404).send({message: 'User not found'});
+        return res.send(updateUser);
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({err, message: 'Error add img into Company'});
+    }
+}
+
+exports.getImage = async(req, res)=>
+{
+    try
+    {
+        const fileName = req.params.fileName;
+        const pathFile = './uploads/companies/' + fileName;
+
+        const image = fs.existsSync(pathFile);
+        if(!image) return res.status(404).send({message: 'Image not found'});
+        return res.sendFile(path.resolve(pathFile));
+    }
+    catch(err)
+    {
+        console.log(err);
+        return res.status(500).send({err, message: 'Error getting image'});
+    }
+}
+
 

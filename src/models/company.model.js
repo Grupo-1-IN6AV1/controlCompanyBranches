@@ -9,7 +9,8 @@ const companySchema = mongoose.Schema({
     email: String,
     phone: String,
     role: String,
-    typeCompany: {type: mongoose.Schema.ObjectId, ref: 'TypeCompany'} 
+    typeCompany: {type: mongoose.Schema.ObjectId, ref: 'TypeCompany'} ,
+    image: String
 });
 
 module.exports = mongoose.model('Company', companySchema);

@@ -55,6 +55,7 @@ exports.savePDF = async(bill,res)=>
         contenidoHtml = contenidoHtml.replace("{{total}}", `Q.${bill.total.toFixed(2)}`);
         contenidoHtml = contenidoHtml.replace("{{date}}",`${bill.date}`);
         contenidoHtml = contenidoHtml.replace("{{NIT}}",`${bill.NIT}`);
+        contenidoHtml = contenidoHtml.replace("{{image}}",`${findCompany.image}`);
 
         //localhost:3000/Factura{{numberBill}}
     
