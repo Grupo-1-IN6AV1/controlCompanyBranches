@@ -35,7 +35,7 @@ exports.saveBranch = async(req, res)=>{
         if(msg) return res.status(400).send(msg);
 
 
-        const companyExist = await Branch.findOne({name:data.name});
+        const companyExist = await Branch.findOne({$and: [{name: data.name},{ company: data.company}]});
         if(companyExist) return res.status(400).send({message: 'Branch already created'});
   
         const townshipExist = await Township.findOne({_id: params.township});
@@ -992,7 +992,7 @@ exports.saveBranchIsAdmin = async(req, res)=>{
         if(msg) return res.status(400).send(msg);
 
 
-        const companyExist = await Branch.findOne({name:data.name});
+        const companyExist = await Branch.findOne({$and:[{name:data.name},{company: data.company}]});
         if(companyExist) return res.status(400).send({message: 'Branch already created'});
   
         const townshipExist = await Township.findOne({_id: params.township});
