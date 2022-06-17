@@ -73,7 +73,7 @@ exports.updateProduct = async(req, res)=> {
 
          //- Verificar que no se duplique con otro Producto.//
          const productDuplicate = await CompanyProduct.findOne({ $and: [{name: params.name}, {company: req.user.sub}]});
-            if(productDuplicate && productExist.name != params.name) return res.send({message: 'Name already in use'});
+            if(productDuplicate && productExist.name != params.name) return res.status(400).send({message: 'Name already in use'});
 
         //- Actualizar el Producto.//
         const data =

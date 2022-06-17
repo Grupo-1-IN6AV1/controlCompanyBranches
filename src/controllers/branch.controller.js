@@ -1026,7 +1026,7 @@ exports.updateBranchIsAdmin = async (req, res) =>{
         const validateUpdate = await checkUpdate(params);
             if(validateUpdate === false) return res.status(400).send({message: 'Cannot update this information or invalid params'});
 
-        const nameBranch = await Branch.findOne({$and: [{name: data.name}]});
+        const nameBranch = await Branch.findOne({$and: [{name: data.name},{company: branchExist.company}]});
             if(nameBranch && branchExist.name != data.name) return res.status(400).send({message: 'Name branch already in use'});
     
         const townshipExist = await Township.findOne({_id: data.township});
